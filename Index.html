@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gem Clicker</title>
+
+<link rel="manifest" href="manifest.webmanifest">
+
+<style>
+
+body{
+background:#0f0f0f;
+color:white;
+font-family:Arial;
+text-align:center;
+margin:0;
+}
+
+.container{
+padding:20px;
+}
+
+button{
+width:90%;
+max-width:420px;
+padding:18px;
+margin:10px;
+font-size:18px;
+border:none;
+border-radius:12px;
+background:#333;
+color:white;
+}
+
+button:active{
+background:#555;
+}
+
+#mineBtn{
+font-size:26px;
+background:#2f7bff;
+}
+
+.particle{
+position:absolute;
+color:#66ccff;
+font-size:18px;
+pointer-events:none;
+animation:float 1s linear forwards;
+}
+
+@keyframes float{
+0%{opacity:1;transform:translateY(0)}
+100%{opacity:0;transform:translateY(-80px)}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💎 Gem Clicker</h1>
+
+<h2 id="gemType">Coal</h2>
+<h1 id="gems">0</h1>
+
+<button id="mineBtn">⛏ MINE</button>
+
+<h2>Upgrades</h2>
+
+<button onclick="buyClick()">Click Power +1 (Cost: <span id="clickCost"></span>)</button>
+
+<button onclick="buyAuto()">Auto Miner (Cost: <span id="autoCost"></span>)</button>
+
+<button onclick="buyMega()">Mega Miner (Cost: <span id="megaCost"></span>)</button>
+
+<button onclick="buyFactory()">Factory (Cost: <span id="factoryCost"></span>)</button>
+
+<button onclick="buyPlanet()">Planet Mine (Cost: <span id="planetCost"></span>)</button>
+
+<button onclick="buyTier()">Next Resource (Cost: <span id="tierCost"></span>)</button>
+
+<h2>Diamond Tier</h2>
+<h3 id="diamondTier">None</h3>
+
+<h2>Prestige</h2>
+
+<button onclick="rebirth()">Rebirth (1M)</button>
+<button onclick="galaxy()">Galaxy Reset (1B)</button>
+<button onclick="universe()">Universe Reset (1T)</button>
+
+</div>
+
+<script>
+
+let gems = 0
+
+let clickPower = 1
+let autoMiners = 0
+let megaMiners = 0
+let factories = 0
+let planets = 0
+
+let clickCost = 10
+let autoCost = 50
+let megaCost = 500
+let factoryCost = 5000
+let planetCost = 50000
+let tierCost = 200
+
+let prestigeMultiplier = 1
+let galaxyMultiplier = 1
+let universeMultiplier = 1
+
+let tier = 0
+let diamondTier = -1
+
+let lastSave = Date.now()
+
+const tiers = [
+"Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"
+]
+
+const diamondColors = [
+"Blue","Green","Yellow","Orange","Red","White","Black","Purple"
+]
+
+function format(num){
+
+if(num < 1000) return Math.floor(num)
+
+const basic = ["K","M","B","T"]
+
+let unit = Math.floor((num.toString().length-1)/3)
+
+let scaled = num/Math.pow(1000,unit)
+
+if(unit <= basic.length){
+return scaled.toFixed(2)+basic[unit-1]
+}
+
+let letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+let index=unit-basic.length-1
+
+let first=letters[Math.floor(index/26)]
+let second=letters[index%26]
+
+return scaled.toFixed(2)+first+second
+
+}
+
+document.getElementById("mineBtn").onclick = function(e){
+
+let gain = clickPower*prestigeMultiplier*galaxyMultiplier*universeMultiplier
+
+gems+=gain
+
+particle(e.pageX,e.pageY,"+"+format(gain))
+
+update()
+
+}
+
+function particle(x,y,text){
+
+let p=document.createElement("div")
+
+p.className="particle"
+p.innerText=text
+
+p.style.left=x+"px"
+p.style.top=y+"px"
+
+document.body.appendChild(p)
+
+setTimeout(()=>p.remove(),1000)
+
+}
+
+function buyClick(){
+
+if(gems>=clickCost){
+
+gems-=clickCost
+clickPower++
+
+clickCost=Math.floor(clickCost*1.6)
+
+update()
+
+}
+
+}
+
+function buyAuto(){
+
+if(gems>=autoCost){
+
+gems-=autoCost
+autoMiners++
+
+autoCost=Math.floor(autoCost*1.8)
+
+update()
+
+}
+
+}
+
+function buyMega(){
+
+if(gems>=megaCost){
+
+gems-=megaCost
+megaMiners++
+
+megaCost=Math.floor(megaCost*2)
+
+update()
+
+}
+
+}
+
+function buyFactory(){
+
+if(gems>=factoryCost){
+
+gems-=factoryCost
+factories++
+
+factoryCost=Math.floor(factoryCost*2.5)
+
+update()
+
+}
+
+}
+
+function buyPlanet(){
+
+if(gems>=planetCost){
+
+gems-=planetCost
+planets++
+
+planetCost=Math.floor(planetCost*3)
+
+update()
+
+}
+
+}
+
+function buyTier(){
+
+if(gems>=tierCost){
+
+gems-=tierCost
+
+if(tier<tiers.length-1){
+tier++
+}else{
+if(diamondTier<diamondColors.length-1){
+diamondTier++
+clickPower*=2
+}
+}
+
+tierCost=Math.floor(tierCost*2)
+
+update()
+
+}
+
+}
+
+function rebirth(){
+
+if(gems>=1e6){
+
+resetGame()
+
+prestigeMultiplier*=2
+
+}
+
+}
+
+function galaxy(){
+
+if(gems>=1e9){
+
+resetGame()
+
+prestigeMultiplier=1
+galaxyMultiplier*=5
+
+}
+
+}
+
+function universe(){
+
+if(gems>=1e12){
+
+resetGame()
+
+prestigeMultiplier=1
+galaxyMultiplier=1
+universeMultiplier*=10
+
+}
+
+}
+
+function resetGame(){
+
+gems=0
+tier=0
+diamondTier=-1
+
+clickPower=1
+autoMiners=0
+megaMiners=0
+factories=0
+planets=0
+
+clickCost=10
+autoCost=50
+megaCost=500
+factoryCost=5000
+planetCost=50000
+tierCost=200
+
+}
+
+setInterval(function(){
+
+let gain=
+(autoMiners*1+
+megaMiners*10+
+factories*100+
+planets*1000)
+
+gain*=prestigeMultiplier*galaxyMultiplier*universeMultiplier
+
+gems+=gain
+
+update()
+
+},1000)
+
+function update(){
+
+document.getElementById("gems").innerText=format(gems)
+
+document.getElementById("gemType").innerText=tiers[tier]
+
+document.getElementById("clickCost").innerText=format(clickCost)
+document.getElementById("autoCost").innerText=format(autoCost)
+document.getElementById("megaCost").innerText=format(megaCost)
+document.getElementById("factoryCost").innerText=format(factoryCost)
+document.getElementById("planetCost").innerText=format(planetCost)
+document.getElementById("tierCost").innerText=format(tierCost)
+
+if(diamondTier>=0){
+document.getElementById("diamondTier").innerText=
+diamondColors[diamondTier]
+}
+
+save()
+
+}
+
+function save(){
+
+localStorage.setItem("gemClicker",JSON.stringify({
+
+gems,
+clickPower,
+autoMiners,
+megaMiners,
+factories,
+planets,
+clickCost,
+autoCost,
+megaCost,
+factoryCost,
+planetCost,
+tierCost,
+tier,
+diamondTier,
+prestigeMultiplier,
+galaxyMultiplier,
+universeMultiplier,
+lastSave:Date.now()
+
+}))
+
+}
+
+function load(){
+
+let save=JSON.parse(localStorage.getItem("gemClicker"))
+
+if(save){
+
+Object.assign(window,save)
+
+let offline=(Date.now()-save.lastSave)/1000
+
+let gain=
+(autoMiners+
+megaMiners*10+
+factories*100+
+planets*1000)
+*offline
+*prestigeMultiplier
+*galaxyMultiplier
+*universeMultiplier
+
+gems+=gain
+
+}
+
+update()
+
+}
+
+setInterval(save,5000)
+
+load()
+
+</script>
+
+</body>
+</html>
