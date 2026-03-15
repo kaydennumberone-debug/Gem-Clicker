@@ -1,20 +1,21 @@
 {
-"name": "Gem Clicker",
-"short_name": "GemClicker",
-"start_url": "./",
-"display": "standalone",
-"background_color": "#0b0c10",
-"description": "Mine gems and conquer galaxies",
-"icons": [
-{
-"src": "icon-192.png",
-"sizes": "192x192",
-"type": "image/png"
-},
-{
-"src": "icon-512.png",
-"sizes": "512x512",
-"type": "image/png"
-}
-]
+  "name": "Gem Clicker",
+  "short_name": "GemClicker",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#07121a",
+  "theme_color": "#07121a",
+  "description": "Mine gems, automate, prestige, and conquer the universe!",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Crect rx='48' width='100%25' height='100%25' fill='%2307121a'/%3E%3Ccircle cx='256' cy='196' r='120' fill='%2339f'/%3E%3Cpath d='M200 140 L312 140 L256 300 Z' fill='%23bfe9ff' opacity='0.2'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192'%3E%3Crect rx='24' width='100%25' height='100%25' fill='%2307121a'/%3E%3Ccircle cx='96' cy='72' r='48' fill='%2339f'/%3E%3Cpath d='M76 52 L116 52 L96 108 Z' fill='%23bfe9ff' opacity='0.2'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
 }
