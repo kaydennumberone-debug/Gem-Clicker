@@ -1,442 +1,707 @@
-<!DOCTYPE html>
-<html>
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gem Clicker</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Gem Clicker — Bernerd</title>
 
 <link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
-
+:root{
+  --bg:#07121a; --panel:#0f1720; --accent:#2f7bff; --muted:#9aa5b1; --card:#0b1220;
+}
+*{box-sizing:border-box}
 body{
-background:#0f0f0f;
-color:white;
-font-family:Arial;
-text-align:center;
-margin:0;
+  margin:0;font-family:Inter,system-ui,Arial,Helvetica;
+  background:linear-gradient(180deg,#04111a 0%,var(--bg) 100%); color:#e6eef6;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:12px;
 }
+#app{width:100%;max-width:980px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.title h1{margin:0;font-size:20px} .small{font-size:12px;color:var(--muted)}
 
-.container{
-padding:20px;
+.panel{
+  background:linear-gradient(180deg,var(--panel),#071422);
+  border-radius:14px;padding:14px; box-shadow:0 8px 40px rgba(2,6,23,0.6);
 }
+.top-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stat{background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;min-width:110px;text-align:center}
+#mineBtn{width:220px;padding:16px;font-size:18px;border:none;border-radius:12px;background:var(--accent);color:white;box-shadow:0 6px 30px rgba(47,123,255,0.18)}
 
-button{
-width:90%;
-max-width:420px;
-padding:18px;
-margin:10px;
-font-size:18px;
-border:none;
-border-radius:12px;
-background:#333;
-color:white;
+.controls{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{flex:1;min-width:140px;padding:12px;border-radius:10px;border:none;background:#18202a;color:white;font-size:15px}
+.action-btn:active{transform:translateY(1px)}
+.small-input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+
+.panel-grid{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px}
+.left-col{min-width:0}
+.right-col{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+
+.badge{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;margin-bottom:8px}
+.footer{margin-top:12px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* particles / gem sprite */
+.particle, .gem{
+  position:fixed; pointer-events:none; user-select:none; transform:translate(-50%,-50%); font-weight:700;
+  animation:floatUp 900ms cubic-bezier(.2,.9,.2,1) forwards;
 }
+.gem{width:36px;height:36px;border-radius:8px; display:flex;align-items:center;justify-content:center;font-size:12px;color:white;text-shadow:0 1px 0 rgba(0,0,0,0.6)}
+@keyframes floatUp{0%{opacity:1;transform:translate(-50%,0) scale(1)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}
 
-button:active{
-background:#555;
-}
+/* animated idle gems */
+.float-container{position:relative;height:64px;overflow:hidden}
+.float-gem{position:absolute;bottom:-20px;width:18px;height:18px;border-radius:6px;opacity:0.85;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-120px) scale(1.1)}}
 
-#mineBtn{
-font-size:26px;
-background:#2f7bff;
-}
+/* settings modal */
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--card);padding:12px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.6);z-index:9999;width:92%;max-width:420px;display:none}
+.modal.show{display:block}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
+.switch{display:inline-flex;align-items:center;gap:8px}
+.switch input{width:20px;height:20px}
 
-.particle{
-position:absolute;
-color:#66ccff;
-font-size:18px;
-pointer-events:none;
-animation:float 1s linear forwards;
-}
-
-@keyframes float{
-0%{opacity:1;transform:translateY(0)}
-100%{opacity:0;transform:translateY(-80px)}
-}
-
+/* responsive */
+@media (max-width:720px){ #mineBtn{width:100%} .panel-grid{grid-template-columns:1fr} }
 </style>
 </head>
-
 <body>
+<div id="app">
+  <div class="header">
+    <div class="title">
+      <h1>💎 Gem Clicker — Bernerd</h1>
+      <div class="small">Mobile friendly • PWA • Optional online leaderboard</div>
+    </div>
+    <div>
+      <button id="openSettings" class="action-btn" style="min-width:80px">⚙️</button>
+    </div>
+  </div>
 
-<div class="container">
+  <div class="panel">
+    <div class="top-row">
+      <div class="stats">
+        <div class="stat"><div class="small">Resource</div><div id="gemType">Coal</div></div>
+        <div class="stat"><div class="small">Gems</div><div id="gems">0</div></div>
+        <div class="stat"><div class="small">Click Power</div><div id="clickPower">1</div></div>
+        <div class="stat"><div class="small">Per Second</div><div id="perSec">0</div></div>
+      </div>
 
-<h1>💎 Gem Clicker</h1>
+      <button id="mineBtn">⛏ MINE</button>
+    </div>
 
-<h2 id="gemType">Coal</h2>
-<h1 id="gems">0</h1>
+    <div class="controls">
+      <div class="action-row">
+        <button id="buyClick" class="action-btn">Click +1 (<span id="clickCost">10</span>)</button>
+        <button id="buyAuto" class="action-btn">Auto (<span id="autoCost">50</span>)</button>
+      </div>
+      <div class="action-row">
+        <button id="buyMega" class="action-btn">Mega (<span id="megaCost">500</span>)</button>
+        <button id="buyAI" class="action-btn">AI (<span id="aiCost">2000</span>)</button>
+      </div>
+      <div class="action-row">
+        <button id="buyFactory" class="action-btn">Factory (<span id="factoryCost">5000</span>)</button>
+        <button id="buyPlanet" class="action-btn">Planet (<span id="planetCost">50000</span>)</button>
+      </div>
+      <div class="action-row">
+        <button id="buyTier" class="action-btn">Next Resource (<span id="tierCost">200</span>)</button>
+        <select id="crateOpen" class="small-input">
+          <option value="none">Open Crate</option>
+          <option value="basic">Basic (free)</option>
+          <option value="premium">Premium (1,000 gems)</option>
+        </select>
+      </div>
+      <div class="action-row">
+        <button id="rebirth" class="action-btn">Rebirth (1M)</button>
+        <button id="galaxy" class="action-btn">Galaxy (1B)</button>
+        <button id="universe" class="action-btn">Universe (1T)</button>
+      </div>
+    </div>
 
-<button id="mineBtn">⛏ MINE</button>
+    <div class="panel-grid">
+      <div class="left-col">
+        <div class="badge">
+          <strong>Upgrades / Info</strong>
+          <div id="upgradeText" class="small" style="margin-top:6px">Welcome — mine gems and build an empire.</div>
+        </div>
 
-<h2>Upgrades</h2>
+        <div class="badge" style="margin-top:8px">
+          <strong>Save / Load / Export</strong>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="exportSave" class="action-btn" style="flex:1">Export</button>
+            <button id="importSave" class="action-btn" style="flex:1">Import</button>
+          </div>
+          <textarea id="importBox" style="width:100%;height:80px;margin-top:8px;border-radius:8px;padding:8px;background:transparent;color:inherit"></textarea>
+        </div>
 
-<button onclick="buyClick()">Click Power +1 (Cost: <span id="clickCost"></span>)</button>
+        <div class="badge" style="margin-top:8px">
+          <strong>Leaderboard</strong>
+          <div id="leaderboard" style="margin-top:8px"></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input id="playerName" class="small-input" placeholder="Name (max16)" maxlength="16">
+            <button id="submitScore" class="action-btn" style="flex:0 0 120px">Submit</button>
+          </div>
+          <div class="small" style="margin-top:6px">Online leaderboard: enable Firebase in Settings (optional)</div>
+        </div>
+      </div>
 
-<button onclick="buyAuto()">Auto Miner (Cost: <span id="autoCost"></span>)</button>
+      <div class="right-col">
+        <div class="badge">
+          <strong>Diamond Tier</strong>
+          <div id="diamondTier" class="small">None</div>
+        </div>
 
-<button onclick="buyMega()">Mega Miner (Cost: <span id="megaCost"></span>)</button>
+        <div class="badge" style="margin-top:8px">
+          <strong>Stats</strong>
+          <div class="small">Auto: <span id="autoCount">0</span></div>
+          <div class="small">Mega: <span id="megaCount">0</span></div>
+          <div class="small">AI: <span id="aiCount">0</span></div>
+          <div class="small">Factory: <span id="factoryCount">0</span></div>
+          <div class="small">Planets: <span id="planetCount">0</span></div>
+        </div>
 
-<button onclick="buyFactory()">Factory (Cost: <span id="factoryCost"></span>)</button>
+        <div class="badge" style="margin-top:8px">
+          <strong>Animated Gems</strong>
+          <div class="float-container" id="floatContainer"></div>
+        </div>
 
-<button onclick="buyPlanet()">Planet Mine (Cost: <span id="planetCost"></span>)</button>
+        <div class="badge" style="margin-top:8px">
+          <strong>Settings (quick)</strong>
+          <div class="row" style="margin-top:6px">
+            <label class="switch small">Sound <input type="checkbox" id="toggleSound" checked></label>
+            <label class="switch small">Music <input type="checkbox" id="toggleMusic" checked></label>
+          </div>
+          <div class="row">
+            <label class="switch small">Particles <input type="checkbox" id="toggleParticles" checked></label>
+            <label class="switch small">Offline cap (hrs) <input id="offlineCap" class="small-input" value="24" style="width:64px"></label>
+          </div>
+        </div>
 
-<button onclick="buyTier()">Next Resource (Cost: <span id="tierCost"></span>)</button>
+      </div>
+    </div>
 
-<h2>Diamond Tier</h2>
-<h3 id="diamondTier">None</h3>
-
-<h2>Prestige</h2>
-
-<button onclick="rebirth()">Rebirth (1M)</button>
-<button onclick="galaxy()">Galaxy Reset (1B)</button>
-<button onclick="universe()">Universe Reset (1T)</button>
-
+    <div class="footer">
+      <div>Auto-save every 5s • Offline capped • PWA installable</div>
+      <div class="small">Made with Bernerd</div>
+    </div>
+  </div>
 </div>
 
-<script>
+<!-- settings modal (popup) -->
+<div id="settingsModal" class="modal" role="dialog" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center"><strong>Settings</strong><button id="closeSettings" class="action-btn" style="min-width:40px">X</button></div>
+  <div class="row">
+    <div class="small">Enable Firebase leaderboard</div>
+    <input id="firebaseConfigBox" class="small-input" placeholder='Paste firebaseConfig JSON here (or leave blank)' style="width:100%;margin-top:6px;height:90px">
+  </div>
+  <div class="row"><button id="saveSettings" class="action-btn" style="width:100%">Save Settings</button></div>
+  <div class="small" style="margin-top:6px">Firebase: create a Web app in Firebase Console, enable Firestore, paste config object here. See docs linked in the instructions.</div>
+</div>
 
-let gems = 0
+<script type="module">
+/* ============================================================
+   Gem Clicker — all-in-one logic (ES module)
+   - Optional: online leaderboard with Firebase (requires config)
+   - Defensive checks, offline cap, audio synthesis, animated gems
+   ============================================================ */
 
-let clickPower = 1
-let autoMiners = 0
-let megaMiners = 0
-let factories = 0
-let planets = 0
-
-let clickCost = 10
-let autoCost = 50
-let megaCost = 500
-let factoryCost = 5000
-let planetCost = 50000
-let tierCost = 200
-
-let prestigeMultiplier = 1
-let galaxyMultiplier = 1
-let universeMultiplier = 1
-
-let tier = 0
-let diamondTier = -1
-
-let lastSave = Date.now()
-
-const tiers = [
-"Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"
-]
-
-const diamondColors = [
-"Blue","Green","Yellow","Orange","Red","White","Black","Purple"
-]
-
-function format(num){
-
-if(num < 1000) return Math.floor(num)
-
-const basic = ["K","M","B","T"]
-
-let unit = Math.floor((num.toString().length-1)/3)
-
-let scaled = num/Math.pow(1000,unit)
-
-if(unit <= basic.length){
-return scaled.toFixed(2)+basic[unit-1]
+/* ---------- State ---------- */
+const SAVE_KEY = 'gemclicker_v3_save'
+let state = {
+  gems: 0,
+  clickPower: 1,
+  autoMiners: 0,
+  megaMiners: 0,
+  aiMiners: 0,
+  factories: 0,
+  planets: 0,
+  clickCost: 10, autoCost: 50, megaCost: 500, aiCost: 2000, factoryCost: 5000, planetCost: 50000,
+  tierCost: 200, tier: 0, diamondTier: -1,
+  prestigeMultiplier: 1, galaxyMultiplier: 1, universeMultiplier: 1,
+  lastSave: Date.now(),
+  settings: { sound: true, music: true, particles: true, offlineCapHours: 24 },
+  firebaseEnabled: false
 }
 
-let letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+/* ---------- Resources ---------- */
+const tiers = ["Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"]
+const diamondColors = ["Blue","Green","Yellow","Orange","Red","White","Black","Purple"]
 
-let index=unit-basic.length-1
-
-let first=letters[Math.floor(index/26)]
-let second=letters[index%26]
-
-return scaled.toFixed(2)+first+second
-
+/* ---------- UI refs ---------- */
+const ui = {
+  gems: document.getElementById('gems'),
+  gemType: document.getElementById('gemType'),
+  clickPower: document.getElementById('clickPower'),
+  perSec: document.getElementById('perSec'),
+  mineBtn: document.getElementById('mineBtn'),
+  clickCost: document.getElementById('clickCost'),
+  autoCost: document.getElementById('autoCost'),
+  megaCost: document.getElementById('megaCost'),
+  aiCost: document.getElementById('aiCost'),
+  factoryCost: document.getElementById('factoryCost'),
+  planetCost: document.getElementById('planetCost'),
+  tierCost: document.getElementById('tierCost'),
+  diamondTier: document.getElementById('diamondTier'),
+  autoCount: document.getElementById('autoCount'),
+  megaCount: document.getElementById('megaCount'),
+  aiCount: document.getElementById('aiCount'),
+  factoryCount: document.getElementById('factoryCount'),
+  planetCount: document.getElementById('planetCount'),
+  upgradeText: document.getElementById('upgradeText'),
+  leaderboard: document.getElementById('leaderboard'),
+  playerName: document.getElementById('playerName'),
+  importBox: document.getElementById('importBox'),
+  openSettings: document.getElementById('openSettings'),
+  settingsModal: document.getElementById('settingsModal'),
+  closeSettings: document.getElementById('closeSettings'),
+  firebaseConfigBox: document.getElementById('firebaseConfigBox'),
+  saveSettingsBtn: document.getElementById('saveSettings'),
+  toggleSound: document.getElementById('toggleSound'),
+  toggleMusic: document.getElementById('toggleMusic'),
+  toggleParticles: document.getElementById('toggleParticles'),
+  offlineCap: document.getElementById('offlineCap'),
+  floatContainer: document.getElementById('floatContainer')
 }
 
-document.getElementById("mineBtn").onclick = function(e){
-
-let gain = clickPower*prestigeMultiplier*galaxyMultiplier*universeMultiplier
-
-gems+=gain
-
-particle(e.pageX,e.pageY,"+"+format(gain))
-
-update()
-
+/* ---------- Utility: big numbers with KA.. after Undecillion ---------- */
+function formatNumber(n){
+  if (!isFinite(n)) return '∞'
+  if(n < 1000) return Math.floor(n).toString()
+  const names = ["K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","Ud","Und"] // up to undecillion included as "Und"
+  const group = Math.floor(Math.log10(Math.max(1,n))/3)
+  const scaled = n / Math.pow(1000, group)
+  if(group <= names.length){
+    return scaled.toFixed(2) + names[group-1]
+  }
+  // after undecillion -> KA KB KC ... always start with 'K'
+  const idx = group - names.length - 1
+  const letters = numberToLetters(idx)
+  return scaled.toFixed(2) + 'K' + letters
+}
+function numberToLetters(i){
+  // 0 -> A, 1 -> B ... 25 -> Z, 26 -> AA ...
+  let s = ''
+  i = Math.max(0, i)
+  while(true){
+    const rem = i % 26
+    s = String.fromCharCode(65 + rem) + s
+    i = Math.floor(i / 26) - 1
+    if(i < 0) break
+  }
+  return s
 }
 
-function particle(x,y,text){
-
-let p=document.createElement("div")
-
-p.className="particle"
-p.innerText=text
-
-p.style.left=x+"px"
-p.style.top=y+"px"
-
-document.body.appendChild(p)
-
-setTimeout(()=>p.remove(),1000)
-
+/* ---------- Production ---------- */
+function getPerSecond(){
+  const base =
+    state.autoMiners*1 +
+    state.megaMiners*10 +
+    state.aiMiners*50 +
+    state.factories*100 +
+    state.planets*1000
+  const mult = state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier
+  return Math.floor(base * mult)
 }
 
-function buyClick(){
-
-if(gems>=clickCost){
-
-gems-=clickCost
-clickPower++
-
-clickCost=Math.floor(clickCost*1.6)
-
-update()
-
+/* ---------- Audio: simple WebAudio synth for click + background loop ---------- */
+const AudioContext = window.AudioContext || window.webkitAudioContext
+let audioCtx = null
+let bgGain = null
+let musicPlaying = false
+function ensureAudio(){
+  if(!audioCtx) {
+    audioCtx = new AudioContext()
+    bgGain = audioCtx.createGain()
+    bgGain.gain.value = 0.08
+    bgGain.connect(audioCtx.destination)
+  }
+}
+function playClickSound(){
+  if(!state.settings.sound) return
+  ensureAudio()
+  const o = audioCtx.createOscillator()
+  const g = audioCtx.createGain()
+  o.type = 'triangle'
+  o.frequency.value = 880 + Math.random()*120
+  g.gain.value = 0.0001
+  o.connect(g); g.connect(audioCtx.destination)
+  g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01)
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25)
+  o.start(); o.stop(audioCtx.currentTime + 0.26)
+}
+/* background "song" — simple arpeggio loop */
+let bgInterval = null
+function startMusic(){
+  if(!state.settings.music) return
+  ensureAudio()
+  if(musicPlaying) return
+  const notes = [220, 277.18, 329.63, 392, 523.25] // some notes
+  let idx = 0
+  bgInterval = setInterval(()=>{
+    const o = audioCtx.createOscillator()
+    const g = audioCtx.createGain()
+    o.type = 'sine'; o.frequency.value = notes[idx % notes.length]
+    g.gain.value = 0.0001
+    o.connect(g); g.connect(bgGain)
+    g.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 0.02)
+    g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.6)
+    o.start(); o.stop(audioCtx.currentTime + 0.62)
+    idx++
+  }, 500)
+  musicPlaying = true
+}
+function stopMusic(){
+  if(bgInterval) clearInterval(bgInterval)
+  musicPlaying = false
 }
 
+/* ---------- Particles & animated gems ---------- */
+function spawnParticle(x,y,text, color='#bfe9ff'){
+  if(!state.settings.particles) return
+  const d = document.createElement('div'); d.className='particle'; d.style.left = x+'px'; d.style.top = y+'px'; d.style.color = color; d.innerText = text
+  document.body.appendChild(d); setTimeout(()=>d.remove(),900)
+}
+function spawnGemSprite(x,y){
+  if(!state.settings.particles) return
+  const g = document.createElement('div'); g.className='gem'; g.style.left = x+'px'; g.style.top = y+'px'
+  // pretty gem style (CSS only)
+  g.style.background = `radial-gradient(circle at 35% 25%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 6%), linear-gradient(135deg, #7cf 0%, #39f 100%)`
+  g.innerText = ''
+  document.body.appendChild(g); setTimeout(()=>g.remove(),900)
+}
+/* floating gems in right panel */
+function createFloatGems(){
+  const container = ui.floatContainer
+  container.innerHTML = ''
+  for(let i=0;i<7;i++){
+    const el = document.createElement('div'); el.className='float-gem'
+    const color = ['#7cf','#39f','#6f9','#f9c','#f66','#fff','#c7f'][i%7]
+    el.style.background = color; el.style.left = (10 + i*12) + '%'
+    el.style.animationDuration = (6 + Math.random()*8) + 's'
+    el.style.animationDelay = (Math.random()*4) + 's'
+    el.style.borderRadius = '6px'
+    container.appendChild(el)
+  }
 }
 
-function buyAuto(){
-
-if(gems>=autoCost){
-
-gems-=autoCost
-autoMiners++
-
-autoCost=Math.floor(autoCost*1.8)
-
-update()
-
+/* ---------- Game actions ---------- */
+function handleClick(evt){
+  // ensure audio unlock in iOS: resume on user gesture
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{})
+  const base = Math.max(1, state.clickPower) * state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier
+  // crit chance capped
+  let critChance = 0.06 + Math.max(0, state.prestigeMultiplier/2 - 0.0001)
+  critChance = Math.min(0.25, critChance)
+  const crit = Math.random() < critChance
+  const critMult = crit ? (1 + 1 + (state.diamondTier+1)*0.1) : 1
+  const gain = Math.max(1, Math.floor(base * critMult))
+  state.gems += gain
+  playClickSound()
+  spawnParticle(evt.clientX, evt.clientY, (crit? '🔥':'') + '+' + formatNumber(gain))
+  spawnGemSprite(evt.clientX, evt.clientY)
+  updateUI()
 }
 
-}
-
-function buyMega(){
-
-if(gems>=megaCost){
-
-gems-=megaCost
-megaMiners++
-
-megaCost=Math.floor(megaCost*2)
-
-update()
-
-}
-
-}
-
-function buyFactory(){
-
-if(gems>=factoryCost){
-
-gems-=factoryCost
-factories++
-
-factoryCost=Math.floor(factoryCost*2.5)
-
-update()
-
-}
-
-}
-
-function buyPlanet(){
-
-if(gems>=planetCost){
-
-gems-=planetCost
-planets++
-
-planetCost=Math.floor(planetCost*3)
-
-update()
-
-}
-
-}
+function buyClick(){ if(state.gems >= state.clickCost){ state.gems -= state.clickCost; state.clickPower += 1; state.clickCost = Math.floor(state.clickCost * 1.55); updateUI() } }
+function buyAuto(){ if(state.gems >= state.autoCost){ state.gems -= state.autoCost; state.autoMiners++; state.autoCost = Math.floor(state.autoCost * 1.75); updateUI() } }
+function buyMega(){ if(state.gems >= state.megaCost){ state.gems -= state.megaCost; state.megaMiners++; state.megaCost = Math.floor(state.megaCost * 2); updateUI() } }
+function buyAI(){ if(state.gems >= state.aiCost){ state.gems -= state.aiCost; state.aiMiners++; state.aiCost = Math.floor(state.aiCost * 2.2); updateUI() } }
+function buyFactory(){ if(state.gems >= state.factoryCost){ state.gems -= state.factoryCost; state.factories++; state.factoryCost = Math.floor(state.factoryCost * 2.4); updateUI() } }
+function buyPlanet(){ if(state.gems >= state.planetCost){ state.gems -= state.planetCost; state.planets++; state.planetCost = Math.floor(state.planetCost * 3); updateUI() } }
 
 function buyTier(){
-
-if(gems>=tierCost){
-
-gems-=tierCost
-
-if(tier<tiers.length-1){
-tier++
-}else{
-if(diamondTier<diamondColors.length-1){
-diamondTier++
-clickPower*=2
-}
-}
-
-tierCost=Math.floor(tierCost*2)
-
-update()
-
-}
-
+  if(state.gems >= state.tierCost){
+    state.gems -= state.tierCost
+    if(state.tier < tiers.length - 1){
+      state.tier++
+      state.upgradeText = `Unlocked ${tiers[state.tier]}!`
+    } else {
+      if(state.diamondTier < diamondColors.length - 1){
+        state.diamondTier++
+        // controlled increase (not raw doubling) to prevent runaway
+        state.clickPower = Math.max(1, Math.floor(state.clickPower * (1 + 0.5 + state.diamondTier*0.25)))
+        state.upgradeText = `Diamond color: ${diamondColors[state.diamondTier]}`
+      } else {
+        state.upgradeText = 'Max diamond tier reached.'
+      }
+    }
+    state.tierCost = Math.floor(state.tierCost * 2)
+    updateUI()
+  }
 }
 
+/* ---------- Loot crates ---------- */
+function openCrate(type){
+  if(type === 'basic'){
+    const pool = [
+      ()=> { state.gems += 50 + state.tier*10; return 'Small gem drop' },
+      ()=> { state.clickPower += 1; return 'Click +1' },
+      ()=> { state.autoMiners += 1; return 'Auto Miner +1' },
+    ]
+    const pick = pool[Math.floor(Math.random()*pool.length)]
+    const msg = pick()
+    state.upgradeText = `Crate: ${msg}`
+  } else if(type === 'premium'){
+    if(state.gems < 1000){ state.upgradeText = 'Need 1,000 gems for premium crate'; return }
+    state.gems -= 1000
+    const pool = [
+      ()=> { state.gems += 5000; return 'Big gem bonus' },
+      ()=> { state.clickPower += 5; return 'Click +5' },
+      ()=> { state.prestigeMultiplier *= 1.5; return 'Prestige +50%' },
+      ()=> { state.autoMiners += 5; return 'Autos +5' },
+      ()=> { state.factories += 1; return 'Factory +1' },
+    ]
+    const pick = pool[Math.floor(Math.random()*pool.length)]
+    const msg = pick()
+    state.upgradeText = `Premium Crate: ${msg}`
+  }
+  updateUI()
+}
+
+/* ---------- Prestige / Galaxy / Universe ---------- */
 function rebirth(){
-
-if(gems>=1e6){
-
-resetGame()
-
-prestigeMultiplier*=2
-
+  if(state.gems < 1e6){ state.upgradeText = 'Need 1,000,000 gems to Rebirth'; return }
+  resetGame()
+  state.prestigeMultiplier *= 2
+  state.upgradeText = 'Rebirth complete: x2 prestige'
+  updateUI()
 }
-
-}
-
 function galaxy(){
-
-if(gems>=1e9){
-
-resetGame()
-
-prestigeMultiplier=1
-galaxyMultiplier*=5
-
+  if(state.gems < 1e9){ state.upgradeText = 'Need 1B gems to Galaxy Reset'; return }
+  resetGame()
+  state.prestigeMultiplier = 1
+  state.galaxyMultiplier *= 5
+  state.upgradeText = 'Galaxy Reset complete: x5 galaxy bonus'
+  updateUI()
 }
-
-}
-
 function universe(){
-
-if(gems>=1e12){
-
-resetGame()
-
-prestigeMultiplier=1
-galaxyMultiplier=1
-universeMultiplier*=10
-
+  if(state.gems < 1e12){ state.upgradeText = 'Need 1T gems to Universe Reset'; return }
+  resetGame()
+  state.prestigeMultiplier = 1
+  state.galaxyMultiplier = 1
+  state.universeMultiplier *= 10
+  state.upgradeText = 'Universe Reset: x10 universe bonus'
+  updateUI()
 }
-
-}
-
 function resetGame(){
-
-gems=0
-tier=0
-diamondTier=-1
-
-clickPower=1
-autoMiners=0
-megaMiners=0
-factories=0
-planets=0
-
-clickCost=10
-autoCost=50
-megaCost=500
-factoryCost=5000
-planetCost=50000
-tierCost=200
-
+  state.gems = 0; state.tier = 0; state.diamondTier = -1
+  state.clickPower = 1; state.autoMiners = 0; state.megaMiners = 0; state.aiMiners = 0; state.factories = 0; state.planets = 0
+  state.clickCost = 10; state.autoCost = 50; state.megaCost = 500; state.aiCost = 2000; state.factoryCost = 5000; state.planetCost = 50000; state.tierCost = 200
 }
 
-setInterval(function(){
-
-let gain=
-(autoMiners*1+
-megaMiners*10+
-factories*100+
-planets*1000)
-
-gain*=prestigeMultiplier*galaxyMultiplier*universeMultiplier
-
-gems+=gain
-
-update()
-
-},1000)
-
-function update(){
-
-document.getElementById("gems").innerText=format(gems)
-
-document.getElementById("gemType").innerText=tiers[tier]
-
-document.getElementById("clickCost").innerText=format(clickCost)
-document.getElementById("autoCost").innerText=format(autoCost)
-document.getElementById("megaCost").innerText=format(megaCost)
-document.getElementById("factoryCost").innerText=format(factoryCost)
-document.getElementById("planetCost").innerText=format(planetCost)
-document.getElementById("tierCost").innerText=format(tierCost)
-
-if(diamondTier>=0){
-document.getElementById("diamondTier").innerText=
-diamondColors[diamondTier]
+/* ---------- Save / Load / Export / Import ---------- */
+function saveGame(){
+  try{
+    state.lastSave = Date.now()
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state))
+  }catch(e){ console.error('Save failed', e) }
+}
+function loadGame(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY)
+    if(!raw) return
+    const s = JSON.parse(raw)
+    if(typeof s.gems !== 'number') return
+    // shallow merge and validate keys we expect
+    Object.assign(state, s)
+    // apply offline gains (capped by hours setting)
+    const elapsed = (Date.now() - (s.lastSave || Date.now())) / 1000
+    const hoursCap = Number(state.settings?.offlineCapHours) || Number(ui.offlineCap.value) || 24
+    const maxSeconds = Math.max(60, Math.min(hoursCap * 3600, 86400)) // 1 minute min, 24h max by default
+    if(elapsed > 5){
+      const perSec = getPerSecond()
+      const offlineGain = Math.floor(perSec * Math.min(elapsed, maxSeconds))
+      state.gems += offlineGain
+      state.upgradeText = `Offline +${formatNumber(offlineGain)} gems`
+    }
+  }catch(e){ console.error('Load failed', e) }
+}
+function exportSave(){
+  ui.importBox.value = JSON.stringify(state)
+  alert('Save exported to the box. Copy it to a file to backup.')
+}
+function importSave(){
+  try{
+    const raw = ui.importBox.value.trim()
+    if(!raw){ alert('Paste JSON into the box and click Import'); return }
+    const s = JSON.parse(raw)
+    if(typeof s.gems !== 'number'){ alert('Invalid save'); return }
+    Object.assign(state, s)
+    saveGame(); updateUI(); alert('Save imported')
+  }catch(e){ alert('Invalid JSON') }
 }
 
-save()
-
+/* ---------- Local leaderboard fallback ---------- */
+const LB_KEY = 'gemclicker_v3_leaderboard_local'
+function submitLocalScore(){
+  const name = (ui.playerName.value.trim().slice(0,16) || 'Anon')
+  const score = Math.floor(state.gems)
+  const raw = localStorage.getItem(LB_KEY); const list = raw ? JSON.parse(raw) : []
+  list.push({name,score,when:Date.now()}); list.sort((a,b)=>b.score-a.score)
+  const top = list.slice(0,10); localStorage.setItem(LB_KEY, JSON.stringify(top))
+  ui.playerName.value = ''; renderLeaderboard()
+}
+function renderLeaderboard(localList){
+  ui.leaderboard.innerHTML = ''
+  let list = localList
+  if(!list){
+    const raw = localStorage.getItem(LB_KEY); list = raw ? JSON.parse(raw) : []
+  }
+  if(list.length === 0){ ui.leaderboard.innerHTML = '<div class="small">No scores yet</div>'; return }
+  list.forEach((row,i)=>{
+    const div = document.createElement('div'); div.className='row'; div.style.marginTop='6px'
+    div.innerHTML = `<div style="font-weight:600">${i+1}. ${escapeHtml(row.name)}</div><div>${formatNumber(row.score)}</div>`
+    ui.leaderboard.appendChild(div)
+  })
 }
 
-function save(){
+/* ---------- Escape helper for leaderboard safety ---------- */
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) }
 
-localStorage.setItem("gemClicker",JSON.stringify({
-
-gems,
-clickPower,
-autoMiners,
-megaMiners,
-factories,
-planets,
-clickCost,
-autoCost,
-megaCost,
-factoryCost,
-planetCost,
-tierCost,
-tier,
-diamondTier,
-prestigeMultiplier,
-galaxyMultiplier,
-universeMultiplier,
-lastSave:Date.now()
-
-}))
-
+/* ---------- Online leaderboard (optional via Firebase) ---------- */
+/* Uses the CDN module import method; user must paste firebaseConfig JSON into settings modal. See Firebase docs. */
+let firebaseApp = null, firestore = null, fbEnabled = false
+async function enableFirebase(configObj){
+  try{
+    if(!configObj) throw new Error('No config')
+    // import firebase modules from CDN (modular API)
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js')
+    const { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js')
+    firebaseApp = initializeApp(configObj)
+    firestore = getFirestore(firebaseApp)
+    fbEnabled = true
+    state.firebaseEnabled = true
+    // fetch top 10
+    await fetchFirebaseLeaderboard()
+    state.upgradeText = 'Firebase connected (leaderboard enabled)'
+  }catch(e){
+    console.error('Firebase init failed', e); alert('Firebase init failed — check config & internet. Falling back to local leaderboard.')
+    fbEnabled = false; state.firebaseEnabled = false
+  }
+}
+async function submitFirebaseScore(name, score){
+  if(!fbEnabled || !firestore) return submitLocalScore()
+  try{
+    const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js')
+    await addDoc(collection(firestore, 'leaderboard'), { player: name, score: score, time: Date.now() })
+    await fetchFirebaseLeaderboard()
+  }catch(e){ console.error('Submit failed', e); submitLocalScore() }
+}
+async function fetchFirebaseLeaderboard(){
+  if(!fbEnabled || !firestore) return renderLeaderboard()
+  try{
+    const { collection, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js')
+    const q = query(collection(firestore,'leaderboard'), orderBy('score','desc'), limit(10))
+    const snap = await getDocs(q)
+    const rows = []
+    snap.forEach(doc => rows.push({ name: doc.data().player, score: doc.data().score }))
+    renderLeaderboard(rows)
+  }catch(e){ console.error('Fetch LB failed', e); renderLeaderboard() }
 }
 
-function load(){
-
-let save=JSON.parse(localStorage.getItem("gemClicker"))
-
-if(save){
-
-Object.assign(window,save)
-
-let offline=(Date.now()-save.lastSave)/1000
-
-let gain=
-(autoMiners+
-megaMiners*10+
-factories*100+
-planets*1000)
-*offline
-*prestigeMultiplier
-*galaxyMultiplier
-*universeMultiplier
-
-gems+=gain
-
+/* ---------- UI update ---------- */
+function updateUI(){
+  ui.gems.innerText = formatNumber(state.gems)
+  ui.gemType.innerText = tiers[state.tier]
+  ui.clickPower.innerText = formatNumber(state.clickPower)
+  ui.perSec.innerText = formatNumber(getPerSecond())
+  ui.clickCost.innerText = formatNumber(state.clickCost || 10)
+  ui.autoCost.innerText = formatNumber(state.autoCost || 50)
+  ui.megaCost.innerText = formatNumber(state.megaCost || 500)
+  ui.aiCost.innerText = formatNumber(state.aiCost || 2000)
+  ui.factoryCost.innerText = formatNumber(state.factoryCost || 5000)
+  ui.planetCost.innerText = formatNumber(state.planetCost || 50000)
+  ui.tierCost.innerText = formatNumber(state.tierCost || 200)
+  ui.diamondTier.innerText = state.diamondTier >= 0 ? diamondColors[state.diamondTier] : 'None'
+  ui.autoCount.innerText = state.autoMiners
+  ui.megaCount.innerText = state.megaMiners
+  ui.aiCount.innerText = state.aiMiners
+  ui.factoryCount.innerText = state.factories
+  ui.planetCount.innerText = state.planets
+  document.getElementById('upgradeText').innerText = state.upgradeText || ''
 }
 
-update()
+/* ---------- Intervals ---------- */
+// per-second production
+setInterval(()=>{ const gain = getPerSecond(); state.gems += gain; updateUI() }, 1000)
+// autosave
+setInterval(saveGame, 5000)
 
+/* ---------- UI bindings ---------- */
+ui.mineBtn.addEventListener('click', handleClick)
+document.getElementById('buyClick').addEventListener('click', buyClick)
+document.getElementById('buyAuto').addEventListener('click', buyAuto)
+document.getElementById('buyMega').addEventListener('click', buyMega)
+document.getElementById('buyAI').addEventListener('click', buyAI)
+document.getElementById('buyFactory').addEventListener('click', buyFactory)
+document.getElementById('buyPlanet').addEventListener('click', buyPlanet)
+document.getElementById('buyTier').addEventListener('click', buyTier)
+document.getElementById('rebirth').addEventListener('click', rebirth)
+document.getElementById('galaxy').addEventListener('click', galaxy)
+document.getElementById('universe').addEventListener('click', universe)
+document.getElementById('exportSave').addEventListener('click', exportSave)
+document.getElementById('importSave').addEventListener('click', importSave)
+document.getElementById('submitScore').addEventListener('click', ()=> {
+  const name = (ui.playerName.value.trim().slice(0,16) || 'Anon'); ui.playerName.value = ''
+  if(state.firebaseEnabled) submitFirebaseScore(name, Math.floor(state.gems)); else submitLocalScore()
+})
+document.getElementById('crateOpen').addEventListener('change', (ev)=>{ if(ev.target.value==='basic') openCrate('basic'); else if(ev.target.value==='premium') openCrate('premium'); ev.target.value='none' })
+
+/* settings modal */
+ui.openSettings.addEventListener('click', ()=>{ ui.settingsModal.classList.add('show'); ui.firebaseConfigBox.value = localStorage.getItem('firebaseConfig') || '' })
+ui.closeSettings.addEventListener('click', ()=>{ ui.settingsModal.classList.remove('show') })
+ui.saveSettingsBtn.addEventListener('click', ()=> {
+  // read toggles
+  state.settings.sound = ui.toggleSound.checked
+  state.settings.music = ui.toggleMusic.checked
+  state.settings.particles = ui.toggleParticles.checked
+  state.settings.offlineCapHours = Number(ui.offlineCap.value) || 24
+  const raw = ui.firebaseConfigBox.value.trim()
+  if(raw){
+    try{
+      const cfg = JSON.parse(raw)
+      localStorage.setItem('firebaseConfig', raw)
+      enableFirebase(cfg)
+    }catch(e){ alert('Invalid JSON for firebase config') }
+  } else {
+    // disable firebase if empty
+    state.firebaseEnabled = false
+    fbEnabled = false
+    state.upgradeText = 'Firebase disabled (local leaderboard)'
+    localStorage.removeItem('firebaseConfig')
+  }
+  ui.settingsModal.classList.remove('show')
+  saveGame(); updateUI()
+})
+
+/* toggles UI reflect state */
+ui.toggleSound.checked = state.settings.sound
+ui.toggleMusic.checked = state.settings.music
+ui.toggleParticles.checked = state.settings.particles
+ui.offlineCap.value = state.settings.offlineCapHours || 24
+ui.toggleMusic.addEventListener('change', ()=>{ if(ui.toggleMusic.checked) startMusic(); else stopMusic(); state.settings.music = ui.toggleMusic.checked })
+
+/* ---------- Floating gem visuals ---------- */
+createFloatGems()
+
+/* ---------- Load and init ---------- */
+loadGame(); renderLeaderboard(); updateUI()
+const t = localStorage.getItem('firebaseConfig')
+if(t){
+  try{ enableFirebase(JSON.parse(t)) }catch(e){ console.warn('Stored firebase config invalid') }
 }
+/* resume music if allowed after user interaction */
+document.addEventListener('click', ()=>{ if(state.settings.music) startMusic() }, { once:true })
 
-setInterval(save,5000)
-
-load()
-
+/* ---------- Safety / Exports for debugging ---------- */
+window.__GEM_STATE = state
+window.__GC_export = ()=>JSON.stringify(state)
+window.__GC_import = (s)=>{ Object.assign(state, JSON.parse(s)); saveGame(); updateUI() }
 </script>
-
 </body>
 </html>
