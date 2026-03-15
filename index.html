@@ -1,55 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>Gem Clicker — Bernerd</title>
-<link rel="manifest" href="manifest.webmanifest">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Gem Clicker — Version Beta 0.12</title>
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="manifest" href="manifest.webmanifest">
+
 <style>
 :root{
-  --bg:#07121a; --panel:#0f1720; --accent:#2f7bff; --muted:#9aa5b1; --card:#0b1220;
+  --bg:#07121a; --panel:#0f1720; --accent:#2f7bff; --muted:#9aa5b1; --card:#08121a;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#04111a,#07121a);color:#e6eef6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:12px}
+body{
+  margin:0; font-family:Inter,system-ui,Arial,Helvetica; -webkit-font-smoothing:antialiased;
+  background:linear-gradient(180deg,#04111a 0%,var(--bg) 100%); color:#e6eef6;
+  display:flex; align-items:flex-start; justify-content:center; padding:12px; min-height:100vh;
+}
 #app{width:100%;max-width:980px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.title h1{margin:0;font-size:20px} .small{font-size:12px;color:var(--muted)}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.title{display:flex;flex-direction:column;align-items:center;flex:1}
+.title h1{margin:0;font-size:18px}
+.version{font-weight:700;color:#ffd86b}
+.small{font-size:12px;color:var(--muted)}
 .panel{background:linear-gradient(180deg,var(--panel),#071422);border-radius:12px;padding:12px;box-shadow:0 8px 40px rgba(2,6,23,0.6)}
 .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.stat{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:10px;min-width:100px;text-align:center}
+.stat{background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:10px;min-width:110px;text-align:center}
 #mineBtn{width:220px;padding:14px;font-size:18px;border:none;border-radius:12px;background:var(--accent);color:white;box-shadow:0 6px 30px rgba(47,123,255,0.18)}
-.controls{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.controls{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .action-row{display:flex;gap:8px;flex-wrap:wrap}
-.action-btn{flex:1;min-width:140px;padding:10px;border-radius:10px;border:none;background:#18202a;color:white;font-size:15px}
+.action-btn{flex:1;min-width:130px;padding:10px;border-radius:10px;border:none;background:#18202a;color:white;font-size:14px}
+.action-btn:active{transform:translateY(1px)}
 .small-input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-.panel-grid{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px}
-.right-col{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+.panel-grid{display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:12px}
+.left-col{min-width:0}
+.right-col{background:rgba(255,255,255,0.02);padding:8px;border-radius:10px}
 .badge{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;margin-bottom:8px}
 .footer{margin-top:12px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
-/* particles and gem sprites */
-.particle, .gem{position:fixed;pointer-events:none;user-select:none;transform:translate(-50%,-50%);font-weight:700;animation:floatUp 900ms cubic-bezier(.2,.9,.2,1) forwards}
+/* particles & gems */
+.particle, .gem{
+  position:fixed; pointer-events:none; user-select:none; transform:translate(-50%,-50%);
+  font-weight:700; animation:floatUp 900ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+.gem{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:white}
 @keyframes floatUp{0%{opacity:1;transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}
 
-/* spider */
-#spider{position:fixed;left:6px;top:6px;width:46px;height:46px;border-radius:6px;background:transparent;display:none;z-index:9999;cursor:pointer}
-#spider::before{content:"";display:block;width:46px;height:46px;background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="46" height="46"><circle cx="23" cy="23" r="18" fill="%23000" /><circle cx="18" cy="18" r="3" fill="%23fff"/><circle cx="28" cy="18" r="3" fill="%23fff"/></svg>') no-repeat center/cover}
+/* floating gems */
+.float-container{position:relative;height:64px;overflow:hidden}
+.float-gem{position:absolute;bottom:-20px;width:18px;height:18px;border-radius:6px;opacity:0.9;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-120px) scale(1.1)}}
 
-/* credits glow */
-.credits{display:flex;gap:12px;flex-direction:column;align-items:flex-start}
-.glow{font-weight:700;padding:6px 10px;border-radius:8px}
-.glow.ber{color:#bfe9ff;text-shadow:0 0 10px rgba(191,233,255,0.6)}
-.glow.idea{color:#b3ffb7;text-shadow:0 0 10px rgba(179,255,183,0.6)}
-.glow.tik{color:#ffd1a6;text-shadow:0 0 10px rgba(255,209,166,0.6)}
-
-/* modal */
-.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--card);padding:12px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.6);z-index:9998;width:92%;max-width:420px;display:none}
+/* modals */
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--card);padding:12px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.6);z-index:9999;width:92%;max-width:480px;display:none}
 .modal.show{display:block}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
-@media (max-width:720px){#mineBtn{width:100%}.panel-grid{grid-template-columns:1fr}}
+
+/* credits glow */
+.glow{font-weight:800;padding:6px;border-radius:6px}
+.glow.bernerd{color:#bfe9ff;text-shadow:0 0 12px #66ccff}
+.glow.kayden{color:#ffd86b;text-shadow:0 0 8px #ffb86b}
+.glow.tiktok{color:#8df78d;text-shadow:0 0 8px #5af75a}
+
+/* spider */
+#spider{position:fixed;left:12px;top:12px;width:46px;height:46px;border-radius:6px;background:#222;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999}
+#spider.hidden{display:none}
+
+/* responsive */
+@media (max-width:760px){ #mineBtn{width:100%} .panel-grid{grid-template-columns:1fr} .action-btn{min-width:120px} }
 </style>
 </head>
 <body>
@@ -57,12 +78,12 @@ body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180de
   <div class="header">
     <div class="title">
       <h1>💎 Gem Clicker</h1>
-      <div class="small">Mobile friendly — accounts, codes, crates, leaderboard</div>
+      <div class="version">Version Beta 0.12</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button id="openAccounts" class="action-btn" style="min-width:78px">Accounts</button>
-      <button id="openCodes" class="action-btn" style="min-width:78px">Codes</button>
-      <button id="openCredits" class="action-btn" style="min-width:78px">Credits</button>
+      <button id="openAccounts" class="action-btn" style="min-width:86px">Accounts</button>
+      <button id="openCredits" class="action-btn" style="min-width:86px">Credits</button>
+      <button id="openCodes" class="action-btn" style="min-width:86px">Codes</button>
     </div>
   </div>
 
@@ -80,9 +101,14 @@ body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180de
     <div class="controls">
       <div class="action-row">
         <button id="buyClick" class="action-btn">Click +1 (<span id="clickCost">10</span>)</button>
-        <button id="buyClickX2" class="action-btn">Click x2 Upgrade (<span id="clickX2Cost">500</span>)</button>
+        <button id="buyClick5" class="action-btn">Click +5 (<span id="click5Cost">120</span>)</button>
       </div>
       <div class="action-row">
+        <button id="buyClickMult" class="action-btn">Click x2 (<span id="clickMultCost">2000</span>)</button>
+        <button id="buyCrit" class="action-btn">Crit +5% (<span id="critCost">800</span>)</button>
+      </div>
+
+      <div class="action-row" style="margin-top:6px">
         <button id="buyAuto" class="action-btn">Auto (<span id="autoCost">50</span>)</button>
         <button id="buyMega" class="action-btn">Mega (<span id="megaCost">500</span>)</button>
       </div>
@@ -95,51 +121,59 @@ body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180de
         <button id="buyTier" class="action-btn">Next Resource (<span id="tierCost">200</span>)</button>
       </div>
 
-      <div class="action-row">
+      <div class="action-row" style="margin-top:6px">
         <select id="crateSelect" class="small-input" style="flex:1">
           <option value="none">Buy Crate</option>
-          <option value="basic">Basic Crate (1,000)</option>
-          <option value="premium">Premium Crate (5,000)</option>
-          <option value="legendary">Legendary Crate (20,000)</option>
+          <option value="bronze">Bronze (500)</option>
+          <option value="silver">Silver (2000)</option>
+          <option value="gold">Gold (10000)</option>
+          <option value="legend">Legend (50000)</option>
         </select>
-        <button id="buyCrate" class="action-btn" style="flex:0 0 120px">Buy</button>
+        <button id="openCrateBtn" class="action-btn" style="flex:0 0 140px">Open</button>
       </div>
 
-      <div class="action-row">
+      <div class="action-row" style="margin-top:6px">
         <button id="rebirth" class="action-btn">Rebirth (1M)</button>
         <button id="galaxy" class="action-btn">Galaxy (1B)</button>
         <button id="universe" class="action-btn">Universe (1T)</button>
       </div>
+
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button id="exportSave" class="action-btn" style="flex:1">Export</button>
+        <button id="importSave" class="action-btn" style="flex:1">Import</button>
+      </div>
+
     </div>
 
     <div class="panel-grid">
-      <div>
+      <div class="left-col">
         <div class="badge">
           <strong>Upgrades / Info</strong>
-          <div id="upgradeText" class="small" style="margin-top:6px">Welcome — tap to mine gems.</div>
-        </div>
-
-        <div class="badge" style="margin-top:8px">
-          <strong>Save / Export</strong>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="exportSave" class="action-btn" style="flex:1">Export</button>
-            <button id="importSave" class="action-btn" style="flex:1">Import</button>
-          </div>
-          <textarea id="importBox" style="width:100%;height:80px;margin-top:8px;border-radius:8px;padding:8px;background:transparent;color:inherit"></textarea>
+          <div id="upgradeText" class="small" style="margin-top:6px">New Beta build — enjoy.</div>
         </div>
 
         <div class="badge" style="margin-top:8px">
           <strong>Leaderboard (local accounts)</strong>
           <div id="leaderboard" style="margin-top:8px"></div>
           <div style="display:flex;gap:8px;margin-top:8px">
-            <input id="playerName" class="small-input" placeholder="Name (max16)" maxlength="16" style="flex:1">
+            <input id="playerName" class="small-input" placeholder="Name to submit (max16)" maxlength="16" style="flex:1">
             <button id="submitScore" class="action-btn" style="flex:0 0 120px">Submit</button>
           </div>
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button id="refreshLB" class="action-btn" style="flex:1">Refresh LB</button>
-            <button id="openAccounts2" class="action-btn" style="flex:1">Open Accounts</button>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="updateLB" class="action-btn" style="flex:1">Update Leaderboard</button>
+            <button id="resetAccount" class="action-btn" style="flex:1">Reset Account</button>
           </div>
         </div>
+
+        <div class="badge" style="margin-top:8px">
+          <strong>Save / Import</strong>
+          <textarea id="importBox" style="width:100%;height:80px;margin-top:8px;border-radius:8px;padding:8px;background:transparent;color:inherit"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="downloadSave" class="action-btn" style="flex:1">Download Save</button>
+            <button id="clearAll" class="action-btn" style="flex:1">Delete All Accounts</button>
+          </div>
+        </div>
+
       </div>
 
       <div class="right-col">
@@ -158,104 +192,115 @@ body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180de
         </div>
 
         <div class="badge" style="margin-top:8px">
-          <strong>Settings</strong>
-          <div class="row" style="margin-top:6px">
-            <label class="small">Sound <input type="checkbox" id="toggleSound"></label>
-            <label class="small">Music <input type="checkbox" id="toggleMusic"></label>
-          </div>
+          <strong>Animated Gems</strong>
+          <div class="float-container" id="floatContainer"></div>
         </div>
 
         <div class="badge" style="margin-top:8px">
-          <strong>Credits</strong>
-          <div class="credits" style="margin-top:8px">
-            <div class="glow ber">Coder: Bernerd (ChatGPT)</div>
-            <div class="glow idea">Idea: Kayden</div>
-            <div class="glow tik">TikTok: @KaydenMakesGamez</div>
+          <strong>Settings</strong>
+          <div class="row" style="margin-top:6px">
+            <label class="small">Music <input id="toggleMusic" type="checkbox" checked></label>
+            <label class="small">Click Sound <input id="toggleSound" type="checkbox" checked></label>
           </div>
         </div>
+
       </div>
     </div>
 
     <div class="footer">
-      <div>Auto-save every 5s • Leaderboard auto-refreshes every 60s</div>
+      <div>Auto-save every 5s • Local accounts (up to 5) • Credits & Codes</div>
       <div class="small">Made with Bernerd</div>
     </div>
   </div>
 </div>
 
-<!-- Spider -->
-<div id="spider" title="Arachnid"></div>
+<!-- spider -->
+<div id="spider" class="hidden" title="Arachnophobia">🕷</div>
 
 <!-- Accounts modal -->
-<div id="accountsModal" class="modal" role="dialog" aria-hidden="true">
-  <div style="display:flex;justify-content:space-between;align-items:center"><strong>Accounts</strong><button id="closeAccounts" class="action-btn" style="min-width:40px">X</button></div>
-  <div class="row" style="margin-top:8px">
-    <input id="newAccountName" class="small-input" placeholder="New account name (max 16)">
-    <button id="createAccount" class="action-btn">Create</button>
+<div id="accountsModal" class="modal" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong>Accounts</strong><div style="display:flex;gap:8px"><button id="closeAccounts" class="action-btn" style="min-width:40px">X</button></div>
   </div>
-  <div id="accountsList" style="margin-top:8px"></div>
-  <div class="small" style="margin-top:8px">Max 5 accounts per device. Accounts are local-only and tied to this device.</div>
+  <div style="margin-top:8px">
+    <div style="display:flex;gap:8px">
+      <input id="newAccountName" class="small-input" placeholder="New account name (max16)" maxlength="16" style="flex:1">
+      <button id="createAccount" class="action-btn" style="flex:0 0 110px">Create</button>
+    </div>
+    <div id="accountsList" style="margin-top:8px"></div>
+    <div class="small" style="margin-top:8px">Accounts are local to this device. Max 5 accounts.</div>
+  </div>
 </div>
 
 <!-- Codes modal -->
-<div id="codesModal" class="modal" role="dialog" aria-hidden="true">
-  <div style="display:flex;justify-content:space-between;align-items:center"><strong>Enter Code</strong><button id="closeCodes" class="action-btn" style="min-width:40px">X</button></div>
-  <div class="row" style="margin-top:8px">
-    <input id="codeInput" class="small-input" placeholder="Enter code here">
-    <button id="redeemCode" class="action-btn">Redeem</button>
+<div id="codesModal" class="modal" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong>Enter Code</strong><button id="closeCodes" class="action-btn" style="min-width:40px">X</button>
   </div>
-  <div id="codeResult" style="margin-top:10px" class="small"></div>
-  <div style="margin-top:10px" class="small">Codes: Bernerd (+500), Kayden (+500), 67 (+67), Release (+750), 69 (+69), Boost (2x 3m59s), Arachnophobia (spider)</div>
+  <div style="margin-top:8px">
+    <input id="codeInput" class="small-input" placeholder="Enter code" style="width:100%">
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="applyCode" class="action-btn" style="flex:1">Apply</button>
+      <button id="listCodes" class="action-btn" style="flex:1">List</button>
+    </div>
+    <div id="codesResult" style="margin-top:8px"></div>
+  </div>
 </div>
 
-<script type="module">
-/* --- Gem Clicker — updated file with requested features --- */
+<!-- Credits modal -->
+<div id="creditsModal" class="modal" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong>Credits</strong><button id="closeCredits" class="action-btn" style="min-width:40px">X</button>
+  </div>
+  <div style="margin-top:8px">
+    <div class="glow bernerd">Coder: Bernerd (ChatGPT)</div>
+    <div class="glow kayden" style="margin-top:6px">Idea: Kayden</div>
+    <div class="glow tiktok" style="margin-top:6px">TikTok: @KaydenMakesGamez</div>
+  </div>
+</div>
 
-/* ---------- Basic state and accounts ---------- */
-const SAVE_ROOT = 'gem_clicker_v4'
-const MAX_ACCOUNTS = 5
+<script>
+/* ========= Gem Clicker — Beta 0.12 =========
+   - Local accounts (max 5)
+   - Local leaderboard among accounts (top 5)
+   - Codes
+   - Arachnophobia spider
+   - New crates (no free)
+   - Boost, click sounds, background music toggles
+   - Anti-cheat heuristic
+   - New save key so old alpha saves won't load
+   - Careful checks to avoid NaN/Infinity
+========================================== */
 
-// default template for a single account state
+/* ---------- Constants & Save Keys ---------- */
+const SAVE_PREFIX = 'gemclicker_beta_v012_' // unique prefix so old alpha not loaded
+const ACCOUNTS_KEY = SAVE_PREFIX + 'accounts' // stores array of account metadata
+const CURRENT_KEY = SAVE_PREFIX + 'current_account' // stores current account id
+const AUTOSAVE_INTERVAL = 5000
+const LB_REFRESH_INTERVAL = 60000 // leaderboard refresh each minute
+
+/* ---------- Default template for player state ---------- */
 function defaultState(){
   return {
     gems: 0,
     clickPower: 1,
+    critChance: 0.06,
     autoMiners: 0,
     megaMiners: 0,
     aiMiners: 0,
     factories: 0,
     planets: 0,
-    clickCost: 10, autoCost: 50, megaCost: 500, aiCost: 2000, factoryCost: 5000, planetCost: 50000,
-    tierCost: 200, tier: 0, diamondTier: -1,
-    prestigeMultiplier: 1, galaxyMultiplier: 1, universeMultiplier: 1,
-    boostMultiplier: 1, boostExpires: 0, // for Boost code
-    redeemed: {}, // codes redeemed per account
-    lastSave: Date.now()
+    clickCost: 10, autoCost:50, megaCost:500, aiCost:2000, factoryCost:5000, planetCost:50000,
+    tierCost: 200, tier:0, diamondTier:-1,
+    prestigeMultiplier:1, galaxyMultiplier:1, universeMultiplier:1,
+    activeBoostExpires: 0, // timestamp in ms for 2x boost expiration
+    redeemedCodes: {}, // track redeemed codes per account
+    upgradeHistory: {}, // store bought upgrades if needed
+    createdAt: Date.now(),
+    lastSave: Date.now(),
+    flaggedCheat: false // anti-cheat flag
   }
 }
-
-// accounts manager: saved in localStorage as object { accounts: [ {name, state}, activeIndex } }
-function loadAccounts(){
-  try{
-    const raw = localStorage.getItem(SAVE_ROOT + '_accounts')
-    if(!raw) return { accounts: [], active: -1 }
-    const obj = JSON.parse(raw)
-    if(!obj.accounts || !Array.isArray(obj.accounts)) return { accounts: [], active: -1 }
-    return obj
-  }catch(e){
-    console.error('Failed load accounts', e)
-    return { accounts: [], active: -1 }
-  }
-}
-function saveAccounts(obj){
-  localStorage.setItem(SAVE_ROOT + '_accounts', JSON.stringify(obj))
-}
-
-/* ---------- Globals ---------- */
-let accountsData = loadAccounts()
-if(!accountsData.accounts) accountsData = { accounts: [], active: -1 }
-let state = defaultState() // currently-active account state (populated on account load)
-let currentAccountName = null
 
 /* ---------- UI refs ---------- */
 const ui = {
@@ -265,7 +310,9 @@ const ui = {
   perSec: document.getElementById('perSec'),
   mineBtn: document.getElementById('mineBtn'),
   clickCost: document.getElementById('clickCost'),
-  clickX2Cost: document.getElementById('clickX2Cost'),
+  click5Cost: document.getElementById('click5Cost'),
+  clickMultCost: document.getElementById('clickMultCost'),
+  critCost: document.getElementById('critCost'),
   autoCost: document.getElementById('autoCost'),
   megaCost: document.getElementById('megaCost'),
   aiCost: document.getElementById('aiCost'),
@@ -282,52 +329,69 @@ const ui = {
   leaderboard: document.getElementById('leaderboard'),
   playerName: document.getElementById('playerName'),
   importBox: document.getElementById('importBox'),
-  toggleSound: document.getElementById('toggleSound'),
-  toggleMusic: document.getElementById('toggleMusic'),
-  openAccounts: document.getElementById('openAccounts'),
-  accountsModal: document.getElementById('accountsModal'),
-  closeAccounts: document.getElementById('closeAccounts'),
-  accountsList: document.getElementById('accountsList'),
-  newAccountName: document.getElementById('newAccountName'),
-  createAccount: document.getElementById('createAccount'),
-  openAccounts2: document.getElementById('openAccounts2'),
-  openCodes: document.getElementById('openCodes'),
-  codesModal: document.getElementById('codesModal'),
-  closeCodes: document.getElementById('closeCodes'),
-  codeInput: document.getElementById('codeInput'),
-  redeemCode: document.getElementById('redeemCode'),
-  codeResult: document.getElementById('codeResult'),
-  exportSave: document.getElementById('exportSave'),
-  importSave: document.getElementById('importSave'),
-  submitScore: document.getElementById('submitScore'),
-  refreshLB: document.getElementById('refreshLB'),
   crateSelect: document.getElementById('crateSelect'),
-  buyCrate: document.getElementById('buyCrate'),
-  openCredits: document.getElementById('openCredits'),
-  creditsModal: null
+  openCrateBtn: document.getElementById('openCrateBtn'),
+  toggleMusic: document.getElementById('toggleMusic'),
+  toggleSound: document.getElementById('toggleSound'),
+  floatContainer: document.getElementById('floatContainer')
 }
+
+/* modals & buttons */
+const accountsModal = document.getElementById('accountsModal')
+const openAccountsBtn = document.getElementById('openAccounts')
+const closeAccountsBtn = document.getElementById('closeAccounts')
+const accountsList = document.getElementById('accountsList')
+const newAccountName = document.getElementById('newAccountName')
+const createAccountBtn = document.getElementById('createAccount')
+
+const codesModal = document.getElementById('codesModal')
+const openCodesBtn = document.getElementById('openCodes')
+const closeCodesBtn = document.getElementById('closeCodes')
+const codeInput = document.getElementById('codeInput')
+const applyCodeBtn = document.getElementById('applyCode')
+const listCodesBtn = document.getElementById('listCodes')
+const codesResult = document.getElementById('codesResult')
+
+const creditsModal = document.getElementById('creditsModal')
+const openCreditsBtn = document.getElementById('openCredits')
+const closeCreditsBtn = document.getElementById('closeCredits')
+
+/* spider & accounts modal controls */
 const spiderEl = document.getElementById('spider')
+const exportBtn = document.getElementById('exportSave')
+const importBtn = document.getElementById('importSave')
+const downloadSaveBtn = document.getElementById('downloadSave')
+const clearAllBtn = document.getElementById('clearAll')
+const submitScoreBtn = document.getElementById('submitScore')
+const updateLBBtn = document.getElementById('updateLB')
+const resetAccountBtn = document.getElementById('resetAccount')
 
-/* ---------- Resource definitions ---------- */
-const tiers = ["Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"]
-const diamondColors = ["Blue","Green","Yellow","Orange","Red","White","Black","Purple"]
+/* misc */
+const openCrateBtnEl = document.getElementById('openCrateBtn')
 
-/* ---------- Format large numbers with KA.. after Undecillion ---------- */
+/* ---------- Game variables ---------- */
+let currentAccountId = null
+let accounts = [] // array of { id, name, createdAt, lastActive }
+let state = defaultState() // points to current account's state
+
+/* ---------- Utility: ID & formatting ---------- */
+function makeId(){ return 'a'+Math.random().toString(36).slice(2,10) }
 function formatNumber(n){
   if(!isFinite(n)) return '∞'
+  n = Number(n) || 0
   if(n < 1000) return Math.floor(n).toString()
   const names = ["K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","Ud","Und"]
   const group = Math.floor(Math.log10(Math.max(1,n))/3)
   const scaled = n / Math.pow(1000, group)
-  if(group <= names.length) return scaled.toFixed(2) + names[group-1]
-  // after Und -> KA KB ...
+  if(group <= names.length){
+    return scaled.toFixed(2) + names[group-1]
+  }
+  // after Und -> KA KB KC ... (always start with K)
   const idx = group - names.length - 1
-  const letters = numberToLetters(idx)
-  return scaled.toFixed(2) + 'K' + letters
+  return scaled.toFixed(2) + 'K' + numberToLetters(idx)
 }
-function numberToLetters(i){
-  let s = ''
-  i = Math.max(0, i)
+function numberToLetters(i){ // 0 -> A, 1 -> B ... 25 -> Z, 26 -> AA
+  let s = ''; i = Math.max(0,i)
   while(true){
     const rem = i % 26
     s = String.fromCharCode(65 + rem) + s
@@ -337,459 +401,547 @@ function numberToLetters(i){
   return s
 }
 
-/* ---------- Production & getPerSecond ---------- */
-function getPerSecond(s){
-  s = s || state
-  const base = s.autoMiners*1 + s.megaMiners*10 + s.aiMiners*50 + s.factories*100 + s.planets*1000
-  const mult = s.prestigeMultiplier * s.galaxyMultiplier * s.universeMultiplier * (s.boostMultiplier || 1)
-  return Math.floor(base * mult)
+/* ---------- Production & boosts ---------- */
+function getPerSecond(st){
+  st = st || state
+  const base = st.autoMiners*1 + st.megaMiners*10 + st.aiMiners*50 + st.factories*100 + st.planets*1000
+  const mult = st.prestigeMultiplier * st.galaxyMultiplier * st.universeMultiplier
+  const boostMult = (st.activeBoostExpires && Date.now() < st.activeBoostExpires) ? 2 : 1
+  return Math.floor(base * mult * boostMult)
 }
 
-/* ---------- Audio (simple) ---------- */
-const AudioContext = window.AudioContext || window.webkitAudioContext
-let audioCtx = null
-let bgGain = null
-let musicTimer = null
+/* ---------- Audio (simple synth) ---------- */
+let audioCtx = null, bgInterval = null, bgGain = null, musicOn = true, clickOn = true
 function ensureAudio(){
   if(!audioCtx){
-    audioCtx = new AudioContext()
-    bgGain = audioCtx.createGain(); bgGain.gain.value = 0.06; bgGain.connect(audioCtx.destination)
+    try{
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+      bgGain = audioCtx.createGain(); bgGain.gain.value = 0.06; bgGain.connect(audioCtx.destination)
+    }catch(e){ console.warn('Audio unavailable', e) }
   }
 }
 function playClickSound(){
-  if(!ui.toggleSound.checked) return
-  try{
-    ensureAudio()
-    const o = audioCtx.createOscillator(); const g = audioCtx.createGain()
-    o.type = 'triangle'; o.frequency.value = 880 + Math.random()*140
-    g.gain.value = 0.0001; o.connect(g); g.connect(audioCtx.destination)
-    g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01)
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25)
-    o.start(); o.stop(audioCtx.currentTime + 0.26)
-  }catch(e){/* ignore audio errors */ }
+  if(!clickOn) return
+  ensureAudio()
+  if(!audioCtx) return
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain()
+  o.type = 'triangle'; o.frequency.value = 800 + Math.random()*160
+  g.gain.value = 0.0001
+  o.connect(g); g.connect(audioCtx.destination)
+  g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01)
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22)
+  o.start(); o.stop(audioCtx.currentTime + 0.24)
 }
 function startMusic(){
-  if(!ui.toggleMusic.checked) return
-  ensureAudio()
-  if(musicTimer) return
-  const notes = [220,277.18,329.63,392,523.25]
+  if(!musicOn) return
+  ensureAudio(); if(!audioCtx) return
+  if(bgInterval) return
+  const notes = [220, 277.18, 329.63, 392, 523.25]
   let idx = 0
-  musicTimer = setInterval(()=>{
-    try{
-      const o = audioCtx.createOscillator(); const g = audioCtx.createGain()
-      o.type = 'sine'; o.frequency.value = notes[idx % notes.length]
-      g.gain.value = 0.0001; o.connect(g); g.connect(bgGain)
-      g.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 0.02)
-      g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.6)
-      o.start(); o.stop(audioCtx.currentTime + 0.62)
-      idx++
-    }catch(e){}
+  bgInterval = setInterval(()=>{
+    const o = audioCtx.createOscillator(); const g = audioCtx.createGain()
+    o.type = 'sine'; o.frequency.value = notes[idx % notes.length]
+    g.gain.value = 0.0001; o.connect(g); g.connect(bgGain)
+    g.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime + 0.02)
+    g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.9)
+    o.start(); o.stop(audioCtx.currentTime + 0.9)
+    idx++
   }, 600)
 }
-function stopMusic(){ if(musicTimer){ clearInterval(musicTimer); musicTimer = null } }
+function stopMusic(){ if(bgInterval){ clearInterval(bgInterval); bgInterval = null } }
 
-/* ---------- Particles ---------- */
+/* ---------- Particles & gems ---------- */
 function spawnParticle(x,y,text,color='#bfe9ff'){
   const d = document.createElement('div'); d.className='particle'; d.style.left = x+'px'; d.style.top = y+'px'; d.style.color = color; d.innerText = text
   document.body.appendChild(d); setTimeout(()=>d.remove(),900)
 }
-function spawnGem(x,y){
+function spawnGemSprite(x,y){
   const g = document.createElement('div'); g.className='gem'; g.style.left = x+'px'; g.style.top = y+'px'
-  g.style.width = '30px'; g.style.height='30px'; g.style.borderRadius='6px'
-  g.style.background = `radial-gradient(circle at 35% 25%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 6%), linear-gradient(135deg,#7cf 0%,#39f 100%)`
+  g.style.background = `radial-gradient(circle at 35% 25%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 6%), linear-gradient(135deg, #7cf 0%, #39f 100%)`
   document.body.appendChild(g); setTimeout(()=>g.remove(),900)
 }
+function createFloatGems(){
+  const container = ui.floatContainer; container.innerHTML = ''
+  for(let i=0;i<7;i++){
+    const el = document.createElement('div'); el.className='float-gem'
+    const color = ['#7cf','#39f','#6f9','#f9c','#f66','#fff','#c7f'][i%7]
+    el.style.left = (5 + i*13)+'%'; el.style.animationDuration = (6 + Math.random()*8)+'s'; el.style.animationDelay = (Math.random()*4)+'s'
+    el.style.background = color; container.appendChild(el)
+  }
+}
 
-/* ---------- Click handling ---------- */
+/* ---------- Basic gameplay: click & buys ---------- */
 function handleClick(e){
-  // resume audio context on first user gesture (iOS)
-  try{ if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}) }catch(e){}
-  const base = Math.max(1, state.clickPower) * state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier * (state.boostMultiplier || 1)
-  let critChance = 0.06 + Math.max(0, state.prestigeMultiplier/2 - 0.0001); critChance = Math.min(0.25, critChance)
-  const crit = Math.random() < critChance
-  const critMult = crit ? (1 + 1 + (state.diamondTier+1)*0.1) : 1
-  const gain = Math.max(1, Math.floor(base * critMult))
+  // resume audio on first gesture for iOS
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{})
+  const base = Math.max(1, state.clickPower) * state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier
+  let critChance = state.critChance || 0.06
+  critChance = Math.min(0.25, critChance)
+  const isCrit = Math.random() < critChance
+  const critMult = isCrit ? (1 + 1 + (state.diamondTier+1)*0.1) : 1
+  const boost = (state.activeBoostExpires && Date.now() < state.activeBoostExpires) ? 2 : 1
+  const gain = Math.max(1, Math.floor(base * critMult * boost))
+  // anti-cheat: if gain is enormous, flag (defense)
+  if(!Number.isFinite(gain) || gain <= 0 || gain > 1e12){ flagCheat('Impossible click gain'); return }
   state.gems += gain
-  playClickSound(); spawnParticle(e.clientX, e.clientY, (crit? '🔥':'') + '+' + formatNumber(gain)); spawnGem(e.clientX, e.clientY)
+  playClickSound()
+  spawnParticle(e.clientX, e.clientY, (isCrit? '🔥':'') + '+' + formatNumber(gain))
+  spawnGemSprite(e.clientX, e.clientY)
   updateUI()
 }
 
-/* ---------- Buy functions ---------- */
-function buyClick(){ if(state.gems >= state.clickCost){ state.gems -= state.clickCost; state.clickPower += 1; state.clickCost = Math.floor(state.clickCost * 1.6); updateUI() } }
-function buyClickX2(){ if(state.gems >= state.clickX2Cost){ state.gems -= state.clickX2Cost; state.clickPower = Math.floor(state.clickPower * 2); state.clickX2Cost = Math.floor(state.clickX2Cost * 4); updateUI() } }
+function buyClick(){ if(state.gems >= state.clickCost){ state.gems -= state.clickCost; state.clickPower += 1; state.clickCost = Math.floor(state.clickCost * 1.55); updateUI() } }
+function buyClick5(){ if(state.gems >= state.click5Cost){ state.gems -= state.click5Cost; state.clickPower += 5; state.click5Cost = Math.floor(state.click5Cost * 1.7); updateUI() } }
+function buyClickMult(){ if(state.gems >= state.clickMultCost){ state.gems -= state.clickMultCost; state.clickPower = Math.floor(state.clickPower * 2); state.clickMultCost = Math.floor(state.clickMultCost * 5); updateUI() } }
+function buyCrit(){ if(state.gems >= state.critCost){ state.gems -= state.critCost; state.critChance = Math.min(0.25, (state.critChance || 0.06) + 0.05); state.critCost = Math.floor(state.critCost * 2.5); updateUI() } }
+
 function buyAuto(){ if(state.gems >= state.autoCost){ state.gems -= state.autoCost; state.autoMiners++; state.autoCost = Math.floor(state.autoCost * 1.75); updateUI() } }
 function buyMega(){ if(state.gems >= state.megaCost){ state.gems -= state.megaCost; state.megaMiners++; state.megaCost = Math.floor(state.megaCost * 2); updateUI() } }
 function buyAI(){ if(state.gems >= state.aiCost){ state.gems -= state.aiCost; state.aiMiners++; state.aiCost = Math.floor(state.aiCost * 2.2); updateUI() } }
 function buyFactory(){ if(state.gems >= state.factoryCost){ state.gems -= state.factoryCost; state.factories++; state.factoryCost = Math.floor(state.factoryCost * 2.4); updateUI() } }
 function buyPlanet(){ if(state.gems >= state.planetCost){ state.gems -= state.planetCost; state.planets++; state.planetCost = Math.floor(state.planetCost * 3); updateUI() } }
 
-function buyTier(){
-  if(state.gems >= state.tierCost){
-    state.gems -= state.tierCost
-    if(state.tier < tiers.length - 1){
-      state.tier++; state.upgradeText = `Unlocked ${tiers[state.tier]}!`
-    } else {
-      if(state.diamondTier < diamondColors.length - 1){
-        state.diamondTier++
-        state.clickPower = Math.max(1, Math.floor(state.clickPower * (1 + 0.5 + state.diamondTier*0.25)))
-        state.upgradeText = `Diamond color: ${diamondColors[state.diamondTier]}`
-      } else {
-        state.upgradeText = 'Max diamond tier reached.'
-      }
-    }
-    state.tierCost = Math.floor(state.tierCost * 2); updateUI()
-  }
-}
+function buyTier(){ if(state.gems >= state.tierCost){ state.gems -= state.tierCost; if(state.tier < tiers.length - 1){ state.tier++; state.upgradeText = `Unlocked ${tiers[state.tier]}!` } else { if(state.diamondTier < diamondColors.length - 1){ state.diamondTier++; state.clickPower = Math.max(1, Math.floor(state.clickPower * (1 + 0.5 + state.diamondTier*0.25))); state.upgradeText = `Diamond color: ${diamondColors[state.diamondTier]}` } else state.upgradeText = 'Max diamond tier reached.' } state.tierCost = Math.floor(state.tierCost * 2); updateUI() } }
 
-/* ---------- Crates purchase ---------- */
-function buySelectedCrate(){
-  const type = ui.crateSelect.value
-  if(type === 'none'){ state.upgradeText = 'Select a crate type'; return }
-  const costs = { basic:1000, premium:5000, legendary:20000 }
-  const pool = {
-    basic: [
-      ()=>{ state.gems += 200; return '200 gems' },
-      ()=>{ state.clickPower += 1; return 'Click +1' },
-      ()=>{ state.autoMiners += 1; return 'Auto +1' }
-    ],
-    premium:[
-      ()=>{ state.gems += 3000; return '3000 gems' },
-      ()=>{ state.clickPower += 3; return 'Click +3' },
-      ()=>{ state.megaMiners += 2; return 'Mega +2' },
-      ()=>{ state.factories += 1; return 'Factory +1' }
-    ],
-    legendary:[
-      ()=>{ state.gems += 10000; return '10,000g' },
-      ()=>{ state.clickPower += 10; return 'Click +10' },
-      ()=>{ state.prestigeMultiplier *= 1.5; return 'Prestige +50%' },
-      ()=>{ state.planets += 1; return 'Planet +1' }
-    ]
-  }
-  const cost = costs[type]
-  if(state.gems < cost){ state.upgradeText = 'Not enough gems for crate'; return }
+/* crate system: bronze, silver, gold, legend */
+function openCrate(type){
+  const costMap = { bronze:500, silver:2000, gold:10000, legend:50000 }
+  const cost = costMap[type] || 0
+  if(!cost || state.gems < cost){ state.upgradeText = 'Not enough gems for crate'; return }
   state.gems -= cost
-  // make rarer rewards: pick roll with weights (legendary has chance for 2x)
-  const itemPool = pool[type]
-  const idx = Math.floor(Math.random() * itemPool.length)
-  const msg = itemPool[idx]()
-  state.upgradeText = `${type} crate: ${msg}`
+  // reward pools (weighted)
+  let reward = ''
+  if(type === 'bronze'){
+    const pick = Math.random()
+    if(pick < 0.5){ state.gems += 100 + state.tier*10; reward = 'Small gem drop' }
+    else if(pick < 0.85){ state.clickPower += 1; reward = 'Click +1' }
+    else { state.autoMiners += 1; reward = 'Auto +1' }
+  } else if(type === 'silver'){
+    const pick = Math.random()
+    if(pick < 0.4){ state.gems += 800 + state.tier*50; reward='Gem bonus' }
+    else if(pick < 0.75){ state.clickPower += 3; reward='Click +3' }
+    else if(pick < 0.9){ state.autoMiners += 3; reward='Autos +3' }
+    else { state.factories += 1; reward='Factory +1' }
+  } else if(type === 'gold'){
+    const pick = Math.random()
+    if(pick < 0.35){ state.gems += 5000 + state.tier*200; reward='Big gems' }
+    else if(pick < 0.7){ state.clickPower += 10; reward='Click +10' }
+    else if(pick < 0.9){ state.factories += 2; reward='Factories +2' }
+    else { state.activeBoostExpires = Date.now() + 3*60*1000; reward='2x boost 3min' } // small boost
+  } else if(type === 'legend'){
+    const pick = Math.random()
+    if(pick < 0.4){ state.gems += 30000 + state.tier*1000; reward='Huge gems' }
+    else if(pick < 0.7){ state.clickPower = Math.floor(state.clickPower * 2); reward='Click x2' }
+    else if(pick < 0.9){ state.factories += 10; reward='Factories +10' }
+    else { state.activeBoostExpires = Date.now() + 10*60*1000; reward='2x boost 10min' }
+  }
+  state.upgradeText = `Crate (${type}): ${reward}`
   updateUI()
 }
 
-/* ---------- Codes system ---------- */
+/* ---------- Codes (one-time per account) ---------- */
 const CODES = {
-  'BERNERD': {type:'currency',amount:500},
-  'KAYDEN': {type:'currency',amount:500},
-  '67': {type:'currency',amount:67},
-  'RELEASE': {type:'currency',amount:750},
-  '69': {type:'currency',amount:69},
-  'BOOST': {type:'boost',mult:2,duration: (3*60 + 59)}, // seconds
-  'ARACHNOPHOBIA': {type:'spider'}
-}
-function redeemCode(code){
-  const key = code.trim().toUpperCase()
-  if(!key) { ui.codeResult.innerText = 'Enter a code'; return }
-  if(!state.redeemed) state.redeemed = {}
-  if(state.redeemed[key]) { ui.codeResult.innerText = 'Already redeemed on this account'; return }
-  const def = CODES[key]
-  if(!def){ ui.codeResult.innerText = 'Invalid code'; return }
-  // redeem effects
-  if(def.type === 'currency'){ state.gems += def.amount; state.redeemed[key] = true; ui.codeResult.innerText = `Redeemed ${key}: +${def.amount} gems` }
-  else if(def.type === 'boost'){ state.boostMultiplier = def.mult; state.boostExpires = Date.now() + def.duration * 1000; state.redeemed[key] = true; ui.codeResult.innerText = `Boost active x${def.mult} for ${def.duration} seconds` }
-  else if(def.type === 'spider'){ spawnSpider(); state.redeemed[key] = true; ui.codeResult.innerText = `Spider spawned!` }
-  updateUI(); saveCurrentAccount()
+  'Bernerd': () => { state.gems += 500; return '500 gems granted' },
+  'Kayden': () => { state.gems += 500; return '500 gems granted' },
+  '67': () => { state.gems += 67; return '67 gems granted' },
+  'Release': () => { state.gems += 750; return '750 gems granted' },
+  '69': () => { state.gems += 69; return '69 gems granted' },
+  'Boost': () => { state.activeBoostExpires = Date.now() + (3*60+59)*1000; return '2x boost activated (3:59)' },
+  'Arachnophobia': () => { showSpider(); return 'Spider summoned' }
 }
 
-/* ---------- Spider / Arachnophobia ---------- */
-let spiderOpenCount = 0
-const spiderDialogs = [
-  {text:'Hi!', weight:150}, // 1/2 -> weight scaled
-  {text:'Hello!', weight:75},
-  {text:'How are you!', weight:50},
-  {text:'How did you find me?', weight:30},
-  {text:'We need… we need, MONEY! YOU DUMB FOOL!', weight:6}
+function applyCode(code){
+  const key = code.trim()
+  if(!key || !CODES[key]){ codesResult.innerText = 'Invalid code' ; return }
+  if(state.redeemedCodes && state.redeemedCodes[key]){ codesResult.innerText = 'Code already redeemed' ; return }
+  // apply
+  try{
+    const res = CODES[key]()
+    state.redeemedCodes[key] = Date.now()
+    codesResult.innerText = `Code applied: ${res}`
+    updateUI()
+  }catch(e){ codesResult.innerText = 'Error applying code' }
+}
+
+/* ---------- Spider (Arachnophobia) ---------- */
+let spiderVisible = false
+const spiderLines = [
+  {text:"Hi!", weight: 1/2},
+  {text:"Hello!", weight: 1/4},
+  {text:"How are you!", weight: 1/6},
+  {text:"How did you find me?", weight: 1/10},
+  {text:"We need… we need, MONEY! YOU DUMB FOOL!", weight: 1/50}
 ]
-function spawnSpider(){
-  spiderEl.style.display = 'block'
-  spiderEl.addEventListener('click', spiderClick)
-}
-function spiderClick(){
-  // weighted random
-  const total = spiderDialogs.reduce((s,it)=>s+it.weight,0)
-  let r = Math.random() * total
-  for(const d of spiderDialogs){
-    r -= d.weight
-    if(r <= 0){
-      alert(d.text) // small alert for fun, could be fancy UI
-      break
-    }
+// normalize to weights array
+function spiderPick(){
+  const arr = spiderLines
+  const total = arr.reduce((s,a)=>s + (a.weight || 0), 0)
+  let r = Math.random() * total, i = 0
+  for(const a of arr){
+    r -= (a.weight || 0)
+    if(r <= 0) return a.text
   }
+  return arr[arr.length-1].text
 }
+function showSpider(){
+  spiderVisible = true; spiderEl.classList.remove('hidden')
+}
+function hideSpider(){ spiderVisible = false; spiderEl.classList.add('hidden') }
+spiderEl.addEventListener('click', ()=>{ const t = spiderPick(); state.upgradeText = t; updateUI() })
 
-/* ---------- Accounts UI & logic ---------- */
-function renderAccounts(){
-  ui.accountsList.innerHTML = ''
-  accountsData.accounts.forEach((acc, idx)=>{
-    const div = document.createElement('div'); div.style.display='flex'; div.style.justifyContent='space-between'; div.style.marginTop='6px'
-    const left = document.createElement('div'); left.innerText = `${acc.name}`
-    const right = document.createElement('div')
-    const btnLoad = document.createElement('button'); btnLoad.className='action-btn'; btnLoad.style.minWidth='80px'; btnLoad.innerText='Load'
-    btnLoad.onclick = ()=> { switchToAccount(idx) }
-    const btnDelete = document.createElement('button'); btnDelete.className='action-btn'; btnDelete.style.minWidth='80px'; btnDelete.innerText='Delete'
-    btnDelete.onclick = ()=> { if(confirm('Delete account? This cannot be undone.')){ accountsData.accounts.splice(idx,1); if(accountsData.active===idx) accountsData.active=-1; saveAccounts(accountsData); renderAccounts(); } }
-    right.appendChild(btnLoad); right.appendChild(btnDelete)
-    div.appendChild(left); div.appendChild(right); ui.accountsList.appendChild(div)
-  })
+/* ---------- Accounts system ---------- */
+function loadAccounts(){
+  try{
+    const raw = localStorage.getItem(ACCOUNTS_KEY)
+    accounts = raw ? JSON.parse(raw) : []
+    if(!Array.isArray(accounts)) accounts = []
+  }catch(e){ accounts = [] }
 }
-function createAccount(){
-  const name = (ui.newAccountName.value || '').trim().slice(0,16)
-  if(!name){ alert('Enter a name') ; return }
-  if(accountsData.accounts.length >= MAX_ACCOUNTS){ alert('Max accounts reached (5)') ; return }
-  const acc = { name, state: defaultState() }
-  accountsData.accounts.push(acc)
-  accountsData.active = accountsData.accounts.length - 1
-  saveAccounts(accountsData)
-  ui.newAccountName.value = ''
-  switchToAccount(accountsData.active)
+function saveAccounts(){ localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)) }
+
+function createAccount(name){
+  if(accounts.length >= 5){ alert('Max 5 accounts'); return }
+  if(!name || name.trim()===''){ alert('Enter a name'); return }
+  const id = makeId()
+  const acc = { id, name: name.slice(0,16), createdAt: Date.now(), lastActive: Date.now() }
+  accounts.push(acc); saveAccounts()
+  // save initial state for this account
+  const s = defaultState(); s.createdAt = Date.now(); localStorage.setItem(SAVE_PREFIX + id, JSON.stringify(s))
+  switchToAccount(id)
   renderAccounts()
 }
-function switchToAccount(index){
-  // save current into accountsData if active
-  if(accountsData.active >= 0 && accountsData.accounts[accountsData.active]){
-    accountsData.accounts[accountsData.active].state = state
-  }
-  // load target
-  const acc = accountsData.accounts[index]
-  if(!acc) return
-  state = acc.state || defaultState()
-  accountsData.active = index
-  currentAccountName = acc.name
-  saveAccounts(accountsData)
-  updateUI()
-  ui.accountsModal.classList.remove('show')
-  // update leaderboard view
-  renderLeaderboard()
+function switchToAccount(id){
+  // autosave current
+  if(currentAccountId) saveCurrentState()
+  currentAccountId = id
+  localStorage.setItem(CURRENT_KEY, id)
+  // load its state
+  const raw = localStorage.getItem(SAVE_PREFIX + id)
+  if(raw){
+    try{ state = JSON.parse(raw) }catch(e){ state = defaultState() }
+  } else state = defaultState()
+  // update lastActive on accounts list
+  const acc = accounts.find(a=>a.id===id); if(acc){ acc.lastActive = Date.now(); saveAccounts() }
+  updateUI(); renderLeaderboard(); renderAccounts()
 }
-function saveCurrentAccount(){
-  if(accountsData.active >= 0 && accountsData.accounts[accountsData.active]){
-    accountsData.accounts[accountsData.active].state = state
-    saveAccounts(accountsData)
+function saveCurrentState(){
+  if(!currentAccountId) return
+  try{
+    state.lastSave = Date.now()
+    localStorage.setItem(SAVE_PREFIX + currentAccountId, JSON.stringify(state))
+  }catch(e){ console.error('Save failed', e) }
+}
+function deleteAccount(id){
+  if(!confirm('Delete this account? This cannot be undone.')) return
+  accounts = accounts.filter(a=>a.id !== id)
+  localStorage.removeItem(SAVE_PREFIX + id)
+  saveAccounts()
+  if(currentAccountId === id){
+    currentAccountId = null; localStorage.removeItem(CURRENT_KEY)
+    if(accounts.length) switchToAccount(accounts[0].id)
+    else state = defaultState()
   }
+  renderAccounts(); renderLeaderboard(); updateUI()
+}
+function resetCurrentAccount(){
+  if(!currentAccountId) return
+  if(!confirm('Reset this account to default?')) return
+  state = defaultState()
+  saveCurrentState()
+  updateUI(); renderLeaderboard()
 }
 
 /* ---------- Leaderboard (local among accounts) ---------- */
+function getLeaderboardData(){
+  loadAccounts()
+  const rows = []
+  for(const a of accounts){
+    try{
+      const raw = localStorage.getItem(SAVE_PREFIX + a.id)
+      if(!raw) continue
+      const s = JSON.parse(raw)
+      rows.push({ id: a.id, name: a.name, score: Math.floor(s.gems || 0), flagged: !!s.flaggedCheat })
+    }catch(e){}
+  }
+  rows.sort((x,y)=>y.score - x.score)
+  return rows.slice(0,5)
+}
 function renderLeaderboard(){
-  // show top up to 5 accounts by gems
-  const list = accountsData.accounts.map(a => ({ name: a.name, score: Math.floor((a.state && a.state.gems) || 0) }))
-  list.sort((a,b)=>b.score-a.score)
-  const top5 = list.slice(0,5)
+  const rows = getLeaderboardData()
   ui.leaderboard.innerHTML = ''
-  if(top5.length === 0){ ui.leaderboard.innerHTML = '<div class="small">No accounts yet</div>'; return }
-  top5.forEach((r,i)=>{
-    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.marginTop='6px'
-    row.innerHTML = `<div style="font-weight:700">${i+1}. ${escapeHtml(r.name)}</div><div>${formatNumber(r.score)}</div>`
-    ui.leaderboard.appendChild(row)
+  if(rows.length === 0){ ui.leaderboard.innerHTML = '<div class="small">No accounts / scores yet</div>'; return }
+  rows.forEach((r,i)=>{
+    const div = document.createElement('div'); div.className='row'; div.style.display='flex'; div.style.justifyContent='space-between'; div.style.marginTop='6px'
+    const name = r.flagged ? `${r.name} (FLAGGED)` : r.name
+    div.innerHTML = `<div style="font-weight:600">${i+1}. ${escapeHtml(name)}</div><div>${formatNumber(r.score)}</div>`
+    ui.leaderboard.appendChild(div)
   })
 }
-function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) }
-
-/* ---------- Export / Import ---------- */
-function exportSave(){
-  // export accounts JSON
-  ui.importBox.value = JSON.stringify(accountsData)
-  alert('Exported accounts JSON to the box. Copy elsewhere to backup.')
-}
-function importSave(){
-  try{
-    const raw = ui.importBox.value.trim()
-    if(!raw) { alert('Paste JSON first'); return }
-    const obj = JSON.parse(raw)
-    if(!obj.accounts || !Array.isArray(obj.accounts)) { alert('Invalid backup'); return }
-    // merge or replace? We'll replace for clarity
-    accountsData = obj
-    if(!accountsData.active) accountsData.active = -1
-    saveAccounts(accountsData)
-    renderAccounts()
-    updateUI()
-    alert('Imported')
-  }catch(e){ alert('Invalid JSON') }
-}
-
-/* ---------- Anti-cheat & load logic ---------- */
-function isValidState(s){
-  if(!s) return false
-  if(typeof s.gems !== 'number' || !isFinite(s.gems)) return false
-  return true
-}
-function applyOfflineGainOnLoad(s){
-  // careful: offline goes forever per request — BUT clamp to reasonable multiplier to discourage edited saves
-  const last = s.lastSave || Date.now()
-  const elapsed = Math.max(0, (Date.now() - last) / 1000) // seconds
-  const perSec = getPerSecond(s)
-  // Allow unlimited offline but clamp if user manually changed lastSave far in the past:
-  // heuristic: if offlineGain > perSec * elapsed * 10 => clamp to perSec * elapsed * 10
-  let offlineGain = Math.floor(perSec * elapsed)
-  const safeMax = perSec * elapsed * 10 + 1000000 // allow some leeway and absolute extra
-  if(offlineGain > safeMax) offlineGain = Math.floor(safeMax)
-  s.gems += offlineGain
-  s.lastSave = Date.now()
-  s.upgradeText = `Offline +${formatNumber(offlineGain)} gems`
-  return s
-}
-
-/* ---------- Save / Load accounts periodically ---------- */
-function periodicSave(){
-  // save current account state into accountsData then into localStorage
-  saveCurrentAccount()
-  saveAccounts(accountsData)
-}
-setInterval(periodicSave, 5000)
-
-/* ---------- On load: if active account exists, load it; else create temp account ---------- */
-function initialLoad(){
-  if(accountsData.active >= 0 && accountsData.accounts[accountsData.active]){
-    state = accountsData.accounts[accountsData.active].state || defaultState()
-    currentAccountName = accountsData.accounts[accountsData.active].name
-    // safety checks + offline
-    if(!isValidState(state)) state = defaultState()
-    state = applyOfflineGainOnLoad(state)
-  } else {
-    // create temporary guest if none exist
-    if(accountsData.accounts.length === 0){
-      // create a first welcome account automatically
-      const name = 'Player1'
-      accountsData.accounts.push({ name, state: defaultState() })
-      accountsData.active = 0
-      saveAccounts(accountsData)
-    }
-    state = accountsData.accounts[accountsData.active].state || defaultState()
-    currentAccountName = accountsData.accounts[accountsData.active].name
-  }
-  updateUI()
-  renderAccounts()
+function updateLeaderboardManual(){
+  // saves current and re-renders
+  saveCurrentState()
   renderLeaderboard()
 }
 
-/* ---------- Update UI ---------- */
+/* ---------- Anti-cheat ---------- */
+function flagCheat(reason){
+  state.flaggedCheat = true
+  state.upgradeText = 'Account flagged for suspicious activity: ' + reason
+  updateUI()
+}
+function antiCheatOnLoad(previousState, currentState){
+  // previousState: saved state before (maybe old). currentState: current loaded one.
+  // If gems jump hugely beyond plausible production, flag. Because offline is unlimited we use a tolerant threshold but still detect impossible spikes.
+  try{
+    const now = Date.now()
+    const last = previousState?.lastSave || currentState.lastSave || now
+    const elapsed = Math.max(1, (now - last) / 1000)
+    const perSec = getPerSecond(previousState || currentState)
+    const plausibleGain = perSec * Math.max(elapsed, 1) * 100 // allow 100x of passive production as generous bound
+    const delta = (currentState.gems || 0) - (previousState?.gems || 0)
+    if(delta > plausibleGain + 1e8){ // enormous jump beyond plausible -> flag
+      flagCheat('Huge offline jump')
+    }
+  }catch(e){}
+}
+
+/* ---------- Save / Load accounts & state ---------- */
+function loadEverything(){
+  loadAccounts()
+  const cur = localStorage.getItem(CURRENT_KEY)
+  if(cur) {
+    // if account exists use it, otherwise pick first
+    const exists = accounts.find(a=>a.id === cur)
+    if(exists) switchToAccount(cur)
+    else if(accounts.length) switchToAccount(accounts[0].id)
+    else { // no accounts -> create default
+      const id = makeId(); accounts.push({id,name:'Player',createdAt:Date.now(),lastActive:Date.now()}); saveAccounts()
+      localStorage.setItem(SAVE_PREFIX + id, JSON.stringify(defaultState()))
+      switchToAccount(id)
+    }
+  } else {
+    if(accounts.length){ switchToAccount(accounts[0].id) } else {
+      // create a default account automatically
+      const id = makeId(); accounts.push({id,name:'Player',createdAt:Date.now(),lastActive:Date.now()}); saveAccounts()
+      localStorage.setItem(SAVE_PREFIX + id, JSON.stringify(defaultState()))
+      switchToAccount(id)
+    }
+  }
+}
+
+/* ---------- Import / Export / Download ---------- */
+function exportCurrent(){
+  if(!currentAccountId) return alert('No account selected')
+  const raw = localStorage.getItem(SAVE_PREFIX + currentAccountId)
+  ui.importBox.value = raw || ''
+  alert('Save exported to box below. Copy it to a file to backup.')
+}
+function importToCurrent(){
+  if(!currentAccountId) return alert('No account selected')
+  const raw = ui.importBox.value.trim()
+  if(!raw) return alert('Paste JSON into the box and click Import')
+  try{
+    const s = JSON.parse(raw)
+    if(typeof s.gems !== 'number') return alert('Invalid save format')
+    localStorage.setItem(SAVE_PREFIX + currentAccountId, JSON.stringify(s))
+    state = s
+    updateUI(); alert('Save imported')
+  }catch(e){ alert('Invalid JSON') }
+}
+function downloadCurrent(){
+  if(!currentAccountId) return alert('No account selected')
+  const raw = localStorage.getItem(SAVE_PREFIX + currentAccountId)
+  if(!raw) return alert('Nothing to download')
+  const blob = new Blob([raw], {type: 'application/json'})
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a'); a.href = url; a.download = 'gemclicker_save_'+currentAccountId+'.json'; document.body.appendChild(a); a.click()
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove() }, 5000)
+}
+
+/* ---------- Helpers ---------- */
+function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) }
+
+/* ---------- UI render & bind ---------- */
 function updateUI(){
-  ui.gems.innerText = formatNumber(state.gems)
-  ui.gemType.innerText = tiers[state.tier]
-  ui.clickPower.innerText = formatNumber(state.clickPower)
+  ui.gems.innerText = formatNumber(state.gems || 0)
+  ui.gemType.innerText = ['Coal','Copper','Bronze','Steel','Silver','Gold','Ruby','Diamond'][state.tier] || 'Coal'
+  ui.clickPower.innerText = formatNumber(state.clickPower || 1)
   ui.perSec.innerText = formatNumber(getPerSecond())
   ui.clickCost.innerText = formatNumber(state.clickCost || 10)
-  ui.clickX2Cost.innerText = formatNumber(state.clickX2Cost || 500)
+  ui.click5Cost.innerText = formatNumber(state.click5Cost || 120)
+  ui.clickMultCost.innerText = formatNumber(state.clickMultCost || 2000)
+  ui.critCost.innerText = formatNumber(state.critCost || 800)
   ui.autoCost.innerText = formatNumber(state.autoCost || 50)
   ui.megaCost.innerText = formatNumber(state.megaCost || 500)
   ui.aiCost.innerText = formatNumber(state.aiCost || 2000)
   ui.factoryCost.innerText = formatNumber(state.factoryCost || 5000)
   ui.planetCost.innerText = formatNumber(state.planetCost || 50000)
   ui.tierCost.innerText = formatNumber(state.tierCost || 200)
-  ui.diamondTier.innerText = state.diamondTier >= 0 ? diamondColors[state.diamondTier] : 'None'
+  ui.diamondTier.innerText = state.diamondTier >= 0 ? ['Blue','Green','Yellow','Orange','Red','White','Black','Purple'][state.diamondTier] : 'None'
   ui.autoCount.innerText = state.autoMiners
   ui.megaCount.innerText = state.megaMiners
   ui.aiCount.innerText = state.aiMiners
   ui.factoryCount.innerText = state.factories
   ui.planetCount.innerText = state.planets
-  document.getElementById('upgradeText').innerText = state.upgradeText || ''
+  document.getElementById('upgradeText').innerText = state.upgradeText || (state.flaggedCheat ? 'FLAGGED: cheating suspected' : '')
+  // update spider visibility based on redeemedCodes Arachnophobia or code
+  if(state.redeemedCodes && state.redeemedCodes['Arachnophobia']) showSpider()
+  // audio toggles reflect UI
+  musicOn = document.getElementById('toggleMusic').checked
+  clickOn = document.getElementById('toggleSound').checked
+  if(musicOn) startMusic(); else { stopMusic() }
 }
 
-/* ---------- Production interval ---------- */
-setInterval(()=>{
-  const gain = Math.floor(getPerSecond())
-  state.gems += gain
-  // expire boosts
-  if(state.boostExpires && Date.now() > state.boostExpires){
-    state.boostMultiplier = 1; state.boostExpires = 0
-  }
-  updateUI()
-}, 1000)
-
-/* ---------- Autosave interval (also saves accounts) ---------- */
-setInterval(()=>{ periodicSave() }, 5000)
-
-/* ---------- Leaderboard auto-refresh every minute ---------- */
-setInterval(()=>{ renderLeaderboard() }, 60000)
+/* accounts UI */
+function renderAccounts(){
+  accountsList.innerHTML = ''
+  accounts.forEach(acc=>{
+    const div = document.createElement('div'); div.style.display='flex'; div.style.justifyContent='space-between'; div.style.alignItems='center'; div.style.marginTop='6px'
+    const isCurrent = acc.id === currentAccountId
+    const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:700">${escapeHtml(acc.name)}</div><div class="small">${new Date(acc.lastActive).toLocaleString()}</div>`
+    const right = document.createElement('div')
+    const switchBtn = document.createElement('button'); switchBtn.className='action-btn'; switchBtn.style.minWidth='70px'; switchBtn.innerText = isCurrent ? 'Active' : 'Switch'
+    switchBtn.disabled = isCurrent
+    switchBtn.addEventListener('click', ()=>{ switchToAccount(acc.id) })
+    const delBtn = document.createElement('button'); delBtn.className='action-btn'; delBtn.style.minWidth='70px'; delBtn.innerText='Delete'
+    delBtn.addEventListener('click', ()=>deleteAccount(acc.id))
+    right.appendChild(switchBtn); right.appendChild(delBtn)
+    div.appendChild(left); div.appendChild(right)
+    accountsList.appendChild(div)
+  })
+}
 
 /* ---------- Event bindings ---------- */
 document.getElementById('mineBtn').addEventListener('click', handleClick)
 document.getElementById('buyClick').addEventListener('click', buyClick)
-document.getElementById('buyClickX2').addEventListener('click', buyClickX2)
+document.getElementById('buyClick5').addEventListener('click', buyClick5)
+document.getElementById('buyClickMult').addEventListener('click', buyClickMult)
+document.getElementById('buyCrit').addEventListener('click', buyCrit)
 document.getElementById('buyAuto').addEventListener('click', buyAuto)
 document.getElementById('buyMega').addEventListener('click', buyMega)
 document.getElementById('buyAI').addEventListener('click', buyAI)
 document.getElementById('buyFactory').addEventListener('click', buyFactory)
 document.getElementById('buyPlanet').addEventListener('click', buyPlanet)
 document.getElementById('buyTier').addEventListener('click', buyTier)
-document.getElementById('rebirth').addEventListener('click', ()=>{ if(state.gems >= 1e6){ resetProgress(); state.prestigeMultiplier *= 2; state.upgradeText='Rebirth done: x2 prestige'; updateUI(); } else state.upgradeText='Need 1,000,000 gems' })
-document.getElementById('galaxy').addEventListener('click', ()=>{ if(state.gems >= 1e9){ resetProgress(); state.galaxyMultiplier *= 5; state.prestigeMultiplier = 1; state.upgradeText='Galaxy done: x5 galaxy'; updateUI(); } else state.upgradeText='Need 1,000,000,000 gems' })
-document.getElementById('universe').addEventListener('click', ()=>{ if(state.gems >= 1e12){ resetProgress(); state.universeMultiplier *= 10; state.prestigeMultiplier = 1; state.galaxyMultiplier = 1; state.upgradeText='Universe done: x10 universe'; updateUI(); } else state.upgradeText='Need 1,000,000,000,000 gems' })
 
-document.getElementById('exportSave').addEventListener('click', exportSave)
-document.getElementById('importSave').addEventListener('click', importSave)
-document.getElementById('submitScore').addEventListener('click', ()=>{ submitLocalScore(); renderLeaderboard() })
-document.getElementById('refreshLB').addEventListener('click', ()=>{ renderLeaderboard() })
-document.getElementById('buyCrate').addEventListener('click', buySelectedCrate)
-document.getElementById('openAccounts').addEventListener('click', ()=>{ ui.accountsModal.classList.add('show'); renderAccounts() })
-document.getElementById('openAccounts2').addEventListener('click', ()=>{ ui.accountsModal.classList.add('show'); renderAccounts() })
-document.getElementById('closeAccounts').addEventListener('click', ()=>{ ui.accountsModal.classList.remove('show') })
-document.getElementById('createAccount').addEventListener('click', createAccount)
-document.getElementById('openCodes').addEventListener('click', ()=>{ ui.codesModal.classList.add('show'); ui.codeResult.innerText = '' })
-document.getElementById('closeCodes').addEventListener('click', ()=>{ ui.codesModal.classList.remove('show') })
-document.getElementById('redeemCode').addEventListener('click', ()=>{ redeemCode(ui.codeInput.value || ''); ui.codeInput.value=''; saveCurrentAccount() })
-document.getElementById('toggleSound').addEventListener('change', ()=>{ /* nothing else needed */ })
-document.getElementById('toggleMusic').addEventListener('change', ()=>{ if(ui.toggleMusic.checked) startMusic(); else stopMusic(); periodicSave() })
+openCrateBtnEl.addEventListener('click', ()=>{
+  const val = document.getElementById('crateSelect').value
+  if(val==='none'){ state.upgradeText = 'Select a crate first'; updateUI(); return }
+  openCrate(val)
+})
 
-/* spider click */
-spiderEl.addEventListener('click', spiderClick)
+exportBtn.addEventListener('click', exportCurrent)
+importBtn.addEventListener('click', importToCurrent)
+downloadSaveBtn.addEventListener('click', downloadCurrent)
+clearAllBtn.addEventListener('click', ()=>{ if(confirm('Delete all accounts and saves?')){ localStorage.clear(); location.reload() } })
 
-/* close credits - simple: create visible popup with credits (we used inline credits) */
-document.getElementById('openCredits').addEventListener('click', ()=>{ alert('Coder: Bernerd\\nIdea: Kayden\\nTikTok: @KaydenMakesGamez') })
-
-/* ---------- Utilities ---------- */
-function resetProgress(){
-  state.gems = 0; state.tier = 0; state.diamondTier = -1
-  state.clickPower = 1; state.autoMiners = 0; state.megaMiners = 0; state.aiMiners = 0; state.factories = 0; state.planets = 0
-  state.clickCost = 10; state.autoCost = 50; state.megaCost = 500; state.aiCost = 2000; state.factoryCost = 5000; state.planetCost = 50000; state.tierCost = 200
-  state.boostMultiplier = 1; state.boostExpires = 0; state.redeemed = {}
-}
-
-/* local score submit (to local leaderboard within accounts) */
-function submitLocalScore(){
-  // save current to accounts
-  saveCurrentAccount()
+submitScoreBtn.addEventListener('click', ()=>{
+  // submit to local leaderboard (auto-saves current)
+  saveCurrentState()
   renderLeaderboard()
-  alert('Progress saved and submitted locally.')
-}
+})
 
-/* ---------- Spider / code-based spawn on load if redeemed earlier ---------- */
-function checkSpiderOnLoad(){
-  // if current account redeemed ARACHNOPHOBIA earlier, spawn visual
-  if(state.redeemed && state.redeemed['ARACHNOPHOBIA']) spawnSpider()
-}
+updateLBBtn.addEventListener('click', updateLeaderboardManual)
+resetAccountBtn.addEventListener('click', resetCurrentAccount)
 
-/* ---------- helpers for safety ---------- */
-function clampSafeNumbers(){
-  // clamp fields to sane bounds to avoid broken saves
-  state.gems = Math.max(0, Math.min(1e300, Number(state.gems) || 0))
-  state.clickPower = Math.max(1, Math.min(1e12, Number(state.clickPower) || 1))
-  // costs
-  state.clickCost = Math.max(1, Math.floor(Number(state.clickCost) || 10))
-}
-/* ---------- Initial load ---------- */
-initialLoad()
-clampSafeNumbers()
-checkSpiderOnLoad()
+/* accounts modal */
+openAccountsBtn.addEventListener('click', ()=>{ accountsModal.classList.add('show'); renderAccounts() })
+closeAccountsBtn.addEventListener('click', ()=>{ accountsModal.classList.remove('show') })
+createAccountBtn.addEventListener('click', ()=>{ createAccount(newAccountName.value || ('Player'+(accounts.length+1))); newAccountName.value = '' })
+
+/* codes modal */
+openCodesBtn.addEventListener('click', ()=>{ codesModal.classList.add('show'); codesResult.innerText = '' })
+closeCodesBtn.addEventListener('click', ()=>{ codesModal.classList.remove('show') })
+applyCodeBtn.addEventListener('click', ()=>{ applyCode(codeInput.value || ''); codeInput.value = '' })
+listCodesBtn.addEventListener('click', ()=>{ codesResult.innerText = 'Codes: Bernerd, Kayden, 67, Release, 69, Boost, Arachnophobia' })
+
+/* credits modal */
+openCreditsBtn.addEventListener('click', ()=>{ creditsModal.classList.add('show') })
+closeCreditsBtn.addEventListener('click', ()=>{ creditsModal.classList.remove('show') })
+
+/* spider toggle by code or UI presence */
+document.getElementById('openCodes').addEventListener ? null : null
+// click the spider to speak handled earlier
+
+/* ---------- Intervals (production, autosave, leaderboard refresh) ---------- */
+setInterval(()=>{
+  // per-second production apply
+  try{
+    const gain = getPerSecond()
+    if(!Number.isFinite(gain) || gain < 0) return
+    state.gems += gain
+    updateUI()
+  }catch(e){}
+}, 1000)
+
+setInterval(()=>{
+  saveCurrentState()
+}, AUTOSAVE_INTERVAL)
+
+setInterval(()=>{
+  renderLeaderboard()
+}, LB_REFRESH_INTERVAL)
+
+/* ---------- Init UI values & state ---------- */
+const tiers = ["Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"]
+const diamondColors = ["Blue","Green","Yellow","Orange","Red","White","Black","Purple"]
+
+// prefill buttons costs that are multi-tiered
+state.click5Cost = 120; state.clickMultCost = 2000; state.critCost = 800
+
+createFloatGems()
+loadEverything() // loads accounts and sets current account
+renderAccounts()
+renderLeaderboard()
 updateUI()
-ui.toggleSound.checked = true
-ui.toggleMusic.checked = false
 
-// resume music after first interaction (user must interact)
-document.addEventListener('click', function unlockAudio(){ try{ if(!audioCtx) ensureAudio(); if(ui.toggleMusic.checked) startMusic(); document.removeEventListener('click', unlockAudio) }catch(e){} })
+/* Anti-cheat on load (compare previous saved copy) */
+try{
+  const prevRaw = localStorage.getItem(SAVE_PREFIX + currentAccountId)
+  if(prevRaw){
+    const prev = JSON.parse(prevRaw)
+    antiCheatOnLoad(prev, state)
+  }
+}catch(e){}
 
-/* expose debug shortcuts */
-window.__GC_SAVE = ()=>{ saveAccounts(accountsData); alert('Saved') }
-window.__GC_DUMP = ()=> JSON.stringify(accountsData)
+/* Make sure audio unlocks after user gesture */
+document.addEventListener('click', function unlockAudioOnce(){
+  ensureAudio()
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{})
+  if(document.getElementById('toggleMusic').checked) startMusic()
+  document.removeEventListener('click', unlockAudioOnce)
+}, { once:true })
 
+/* Prevent accidental NaN / Infinity creeping in via import -- basic sanitize on save */
+const origSaveCurrentState = saveCurrentState
+saveCurrentState = function(){
+  // sanitize numeric fields
+  for(const k of ['gems','clickPower','critChance','autoMiners','megaMiners','aiMiners','factories','planets']){
+    if(!Number.isFinite(state[k])) state[k] = 0
+  }
+  origSaveCurrentState()
+}
+
+/* helper to flag on suspicious manual editing of saved JSON: if new gems massively exceed reasonable bound, flag */
+(function monitorLargeJumps(){
+  let last = state.gems || 0
+  setInterval(()=>{
+    const nowG = state.gems || 0
+    if(nowG - last > 1e9 && (nowG - last) > getPerSecond()*3600*24*30){ flagCheat('Huge sudden gain detected') }
+    last = nowG
+  }, 5000)
+})()
+
+/* expose debugging helpers (for you) */
+window.__GEM_STATE = () => ({ currentAccountId, accounts, state })
+window.__EXPORT_ALL = () => {
+  const dump = { accounts: accounts, saves: {} }
+  accounts.forEach(a => dump.saves[a.id] = localStorage.getItem(SAVE_PREFIX + a.id))
+  return JSON.stringify(dump)
+}
+
+// ensure everything saved before unload
+window.addEventListener('beforeunload', ()=>{ saveCurrentState(); saveAccounts() })
 </script>
 </body>
 </html>
