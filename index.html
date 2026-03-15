@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>Gem Clicker — Bernerd</title>
+<title>Gem Clicker — Bernerd (Fixed)</title>
 
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,9 +12,6 @@
 <style>
 :root{
   --bg:#07121a; --panel:#0f1720; --accent:#2f7bff; --muted:#9aa5b1; --card:#0b1220;
-  --glow-coder: rgba(63,224,255,0.9);
-  --glow-idea: rgba(80,255,150,0.92);
-  --glow-tiktok: rgba(255,110,220,0.95);
 }
 *{box-sizing:border-box}
 body{
@@ -62,45 +59,71 @@ body{
 .float-gem{position:absolute;bottom:-20px;width:18px;height:18px;border-radius:6px;opacity:0.85;animation:rise linear infinite}
 @keyframes rise{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-120px) scale(1.1)}}
 
-/* modal / menu */
+/* settings modal */
 .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--card);padding:12px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.6);z-index:9999;width:92%;max-width:420px;display:none}
 .modal.show{display:block}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
 .switch{display:inline-flex;align-items:center;gap:8px}
 .switch input{width:20px;height:20px}
 
-/* menu / splash */
-#menuOverlay{position:fixed;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(3,7,13,0.9),rgba(2,6,14,0.95));display:flex;align-items:center;justify-content:center;z-index:10000;padding:20px}
-.menuCard{background:linear-gradient(180deg,#071421,#081826);border-radius:14px;padding:18px;max-width:680px;width:100%;text-align:center}
-.menuImage{width:160px;height:160px;margin:6px auto;border-radius:18px;display:flex;align-items:center;justify-content:center}
-.menuTitle{font-size:22px;margin:8px 0}
-.menuBtn{padding:12px 18px;border-radius:10px;border:none;background:var(--accent);color:white;font-size:16px;margin-top:10px}
+/* menu screen */
+#menu{position:fixed;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.45), rgba(0,0,0,0.45));display:flex;align-items:center;justify-content:center;z-index:2000}
+.menu-card{width:94%;max-width:720px;background:linear-gradient(180deg,#031018,#07202e);border-radius:14px;padding:18px;color:#e6eef6;box-shadow:0 12px 50px rgba(0,0,0,0.7);text-align:center}
+.menu-hero{height:160px;border-radius:10px;background:linear-gradient(135deg,#183a8a,#7cf);display:flex;align-items:center;justify-content:center;color:#031018;font-size:26px;font-weight:800}
+.glow{font-weight:700;font-size:16px;margin-top:6px}
+.ghost-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 16px;border-radius:10px;color:inherit}
 
-/* credits glow */
-.credits{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-.credit-name{font-weight:700;padding:6px;border-radius:6px}
-.glow-coder{color:#9ef; text-shadow:0 0 10px var(--glow-coder), 0 0 22px rgba(63,224,255,0.08)}
-.glow-idea{color:#bffdce; text-shadow:0 0 10px var(--glow-idea), 0 0 22px rgba(80,255,150,0.08)}
-.glow-tiktok{color:#ffcff0; text-shadow:0 0 10px var(--glow-tiktok), 0 0 22px rgba(255,110,220,0.08)}
+/* credits glowing styles */
+.credit-name{display:inline-block;padding:4px 8px;border-radius:6px;margin:3px}
+.credit-chatgpt{box-shadow:0 0 10px #6ef, 0 0 24px #3bf;color:#bfe9ff}
+.credit-kayden{box-shadow:0 0 10px #8f6, 0 0 24px #4c8;color:#cffae6}
+.credit-tiktok{box-shadow:0 0 10px #f9c, 0 0 24px #f6a;color:#fff0f2}
 
+/* spider */
+#spiderBtn{position:fixed;left:12px;top:12px;width:50px;height:50px;border-radius:50%;background:transparent;border:0;z-index:1000}
+#spiderBtn img{width:46px;height:46px;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,0.6)}
+
+/* responsive */
 @media (max-width:720px){ #mineBtn{width:100%} .panel-grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-<div id="app" aria-hidden="true">
+
+<!-- MENU (shows at start) -->
+<div id="menu">
+  <div class="menu-card" role="dialog" aria-modal="true">
+    <div class="menu-hero" id="menuHero">💎 GEM CLICKER — BERnero EDITION</div>
+    <div style="margin-top:12px">A simple idle clicker made with Bernerd & Kayden</div>
+    <div style="margin-top:12px">
+      <button id="startGame" class="action-btn" style="min-width:180px">Start Game</button>
+      <button id="openCredits" class="ghost-btn">Credits</button>
+    </div>
+    <div style="margin-top:12px" class="small">Tap <strong>Add to Home Screen</strong> in Safari to install.</div>
+  </div>
+</div>
+
+<!-- spider (Arachnophobia) -->
+<button id="spiderBtn" title="Arachnophobia (click me!)" aria-label="Spider">
+  <!-- small SVG spider -->
+  <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='46' height='46' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%23121a1f'/><path d='M12 6a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm-4.5 9a1 1 0 110 2 1 1 0 010-2zm9 0a1 1 0 110 2 1 1 0 010-2z' fill='%23fff' opacity='0.9'/></svg>" alt="spider">
+</button>
+
+<div id="app" style="opacity:1">
   <div class="header">
     <div class="title">
       <h1>💎 Gem Clicker — Bernerd</h1>
-      <div class="small">Mobile friendly • PWA • Optional online leaderboard</div>
+      <div class="small">Mobile friendly • PWA • Leaderboard</div>
     </div>
     <div>
       <button id="openSettings" class="action-btn" style="min-width:80px">⚙️</button>
+      <button id="openLeaderboard" class="action-btn" style="min-width:80px">🏆</button>
+      <button id="openCodes" class="action-btn" style="min-width:80px">Codes</button>
     </div>
   </div>
 
-  <div class="panel" role="main">
+  <div class="panel">
     <div class="top-row">
-      <div class="stats" aria-hidden="false">
+      <div class="stats">
         <div class="stat"><div class="small">Resource</div><div id="gemType">Coal</div></div>
         <div class="stat"><div class="small">Gems</div><div id="gems">0</div></div>
         <div class="stat"><div class="small">Click Power</div><div id="clickPower">1</div></div>
@@ -161,8 +184,7 @@ body{
             <input id="playerName" class="small-input" placeholder="Name (max16)" maxlength="16">
             <button id="submitScore" class="action-btn" style="flex:0 0 120px">Submit</button>
           </div>
-          <div class="small" style="margin-top:6px">Open the full leaderboard with the button below (refreshes every minute).</div>
-          <div style="margin-top:8px"><button id="openLeaderboard" class="action-btn">Open Leaderboard</button></div>
+          <div class="small" style="margin-top:6px">Online leaderboard: enable Firebase in Settings (optional)</div>
         </div>
       </div>
 
@@ -187,70 +209,83 @@ body{
         </div>
 
         <div class="badge" style="margin-top:8px">
-          <strong>Settings</strong>
+          <strong>Settings (music & sound)</strong>
           <div class="row" style="margin-top:6px">
-            <label class="switch small">Click Sound <input type="checkbox" id="toggleSound" checked></label>
+            <label class="switch small">Sound <input type="checkbox" id="toggleSound" checked></label>
             <label class="switch small">Music <input type="checkbox" id="toggleMusic" checked></label>
           </div>
-          <div class="small" style="margin-top:6px">Tip: Music starts after first tap to satisfy mobile audio policies.</div>
+          <div class="small" style="margin-top:6px">Settings are saved automatically.</div>
         </div>
-
       </div>
     </div>
 
     <div class="footer">
-      <div>Auto-save every 5s • Offline gains always earn (no cap)</div>
-      <div class="small">Made with Bernerd</div>
+      <div>Auto-save every 5s • Offline gains always applied on load</div>
+      <div class="small">Made with Bernerd • v3.1</div>
     </div>
   </div>
 </div>
 
-<!-- menu overlay -->
-<div id="menuOverlay" aria-hidden="false">
-  <div class="menuCard" role="dialog" aria-modal="true">
-    <div class="menuImage" style="background:radial-gradient(circle at 30% 30%, #9ef, #39f);">
-      <!-- simple SVG gem icon inline -->
-      <svg width="96" height="96" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <polygon points="32,6 54,22 46,50 18,50 10,22" fill="#6bf" stroke="#cfe" stroke-width="1"/>
-        <polygon points="32,6 46,22 32,36 18,22" fill="#9ef" opacity="0.9"/>
-      </svg>
-    </div>
-    <div class="menuTitle">Gem Clicker</div>
-    <div class="small">Tap Play to start mining. Toggle sound & music in Settings.</div>
-    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
-      <button id="playBtn" class="menuBtn">Play</button>
-      <button id="creditsBtn" class="menuBtn" style="background:#222">Credits</button>
-    </div>
-
-    <div class="credits" id="creditsBlock" style="display:none">
-      <div class="small">Credits</div>
-      <div class="credit-name glow-coder">Coder: ChatGPT</div>
-      <div class="credit-name glow-idea">Idea: Kayden</div>
-      <div class="credit-name glow-tiktok">TikTok: @KaydenMakesGamez</div>
-    </div>
-  </div>
-</div>
-
-<!-- leaderboard modal -->
-<div id="leaderboardModal" class="modal" role="dialog" aria-hidden="true" style="width:92%;max-width:520px">
+<!-- Credits modal -->
+<div id="creditsModal" class="modal" role="dialog" aria-hidden="true">
   <div style="display:flex;justify-content:space-between;align-items:center">
-    <strong>Leaderboard</strong>
-    <div style="display:flex;gap:8px">
-      <button id="refreshLB" class="action-btn" style="padding:6px 10px">Refresh</button>
-      <button id="closeLB" class="action-btn" style="padding:6px 10px">Close</button>
+    <strong>Credits</strong>
+    <button id="closeCredits" class="action-btn" style="min-width:40px">X</button>
+  </div>
+  <div style="margin-top:8px">
+    <div>Coder: <span class="credit-name credit-chatgpt">ChatGPT</span></div>
+    <div>Idea: <span class="credit-name credit-kayden">Kayden</span></div>
+    <div>TikTok: <span class="credit-name credit-tiktok">@KaydenMakesGamez</span></div>
+  </div>
+</div>
+
+<!-- Codes modal -->
+<div id="codesModal" class="modal" role="dialog" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong>Enter Code</strong>
+    <button id="closeCodes" class="action-btn" style="min-width:40px">X</button>
+  </div>
+  <div style="margin-top:8px">
+    <input id="codeInput" class="small-input" placeholder="Enter code here" style="width:100%"/>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="redeemCode" class="action-btn" style="flex:1">Redeem</button>
+      <button id="showUsedCodes" class="action-btn" style="flex:1">Used Codes</button>
+    </div>
+    <div id="codesMsg" class="small" style="margin-top:6px"></div>
+  </div>
+</div>
+
+<!-- settings modal (for firebase/persistence toggles if wanted) -->
+<div id="settingsModal" class="modal" role="dialog" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong>Settings</strong>
+    <button id="closeSettings" class="action-btn" style="min-width:40px">X</button>
+  </div>
+  <div class="row" style="flex-direction:column;align-items:flex-start">
+    <div class="small">Firebase config (optional for online leaderboard). Paste JSON here:</div>
+    <textarea id="firebaseConfigBox" style="width:100%;height:120px;margin-top:8px;border-radius:8px;padding:8px;background:transparent;color:inherit"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="saveSettings" class="action-btn" style="flex:1">Save</button>
+      <button id="clearFirebase" class="action-btn" style="flex:1">Disable Firebase</button>
     </div>
   </div>
-  <div id="leaderboardFull" style="margin-top:8px"></div>
 </div>
 
 <script type="module">
 /* ============================================================
-   Gem Clicker — updated (menu, simplified settings, unlimited offline)
-   Paste this as index.html (replace existing).
-   ============================================================ */
+  Gem Clicker - fixed/updated
+  - Music + click toggles only
+  - Offline gains: unlimited (applied on load)
+  - Leaderboard: local fallback / optional Firebase
+  - Codes system + Boost timer
+  - Spider (Arachnophobia) UI & messages
+  - Anti-cheat heuristics (basic detection)
+  - Menu screen + credits
+  ============================================================ */
 
-/* ---------- State & constants ---------- */
-const SAVE_KEY = 'gemclicker_v4_save'
+const SAVE_KEY = 'gemclicker_v3x_save';
+const LB_KEY = 'gemclicker_v3x_leaderboard_local';
+
 let state = {
   gems: 0,
   clickPower: 1,
@@ -263,16 +298,17 @@ let state = {
   tierCost: 200, tier: 0, diamondTier: -1,
   prestigeMultiplier: 1, galaxyMultiplier: 1, universeMultiplier: 1,
   lastSave: Date.now(),
-  settings: { sound: true, music: true, particles: true },
-  firebaseEnabled: false
-}
+  settings: { sound: true, music: true },
+  usedCodes: [],
+  boost: { active: false, until: 0 }, // boost multiplier 2x
+  cheatDetected: false // anti-cheat flag
+};
 
-const tiers = ["Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"]
-const diamondColors = ["Blue","Green","Yellow","Orange","Red","White","Black","Purple"]
+const tiers = ["Coal","Copper","Bronze","Steel","Silver","Gold","Ruby","Diamond"];
+const diamondColors = ["Blue","Green","Yellow","Orange","Red","White","Black","Purple"];
 
-/* ---------- UI refs ---------- */
+/* UI refs */
 const ui = {
-  app: document.getElementById('app'),
   gems: document.getElementById('gems'),
   gemType: document.getElementById('gemType'),
   clickPower: document.getElementById('clickPower'),
@@ -295,136 +331,144 @@ const ui = {
   leaderboard: document.getElementById('leaderboard'),
   playerName: document.getElementById('playerName'),
   importBox: document.getElementById('importBox'),
-  openSettings: document.getElementById('openSettings'),
-  settingsModal: document.getElementById('settingsModal'),
-  closeSettings: document.getElementById('closeSettings'),
-  toggleSound: document.getElementById('toggleSound'),
-  toggleMusic: document.getElementById('toggleMusic'),
-  toggleParticles: document.getElementById('toggleParticles'),
-  floatContainer: document.getElementById('floatContainer'),
-  playBtn: document.getElementById('playBtn'),
-  menuOverlay: document.getElementById('menuOverlay'),
-  creditsBtn: document.getElementById('creditsBtn'),
-  creditsBlock: document.getElementById('creditsBlock'),
-  openLeaderboard: document.getElementById('openLeaderboard'),
-  leaderboardModal: document.getElementById('leaderboardModal'),
-  leaderboardFull: document.getElementById('leaderboardFull'),
-  closeLB: document.getElementById('closeLB'),
-  refreshLB: document.getElementById('refreshLB'),
-  submitScoreBtn: document.getElementById('submitScore'),
   exportSaveBtn: document.getElementById('exportSave'),
   importSaveBtn: document.getElementById('importSave'),
-  crateOpen: document.getElementById('crateOpen')
-}
+  openSettingsBtn: document.getElementById('openSettings'),
+  settingsModal: document.getElementById('settingsModal'),
+  closeSettings: document.getElementById('closeSettings'),
+  firebaseConfigBox: document.getElementById('firebaseConfigBox'),
+  saveSettingsBtn: document.getElementById('saveSettings'),
+  clearFirebaseBtn: document.getElementById('clearFirebase'),
+  toggleSound: document.getElementById('toggleSound'),
+  toggleMusic: document.getElementById('toggleMusic'),
+  floatContainer: document.getElementById('floatContainer'),
+  menu: document.getElementById('menu'),
+  startGame: document.getElementById('startGame'),
+  openCredits: document.getElementById('openCredits'),
+  creditsModal: document.getElementById('creditsModal'),
+  closeCredits: document.getElementById('closeCredits'),
+  creditsOpenBtn: document.getElementById('openCredits'),
+  spiderBtn: document.getElementById('spiderBtn'),
+  codesModal: document.getElementById('codesModal'),
+  codeInput: document.getElementById('codeInput'),
+  redeemCodeBtn: document.getElementById('redeemCode'),
+  codesMsg: document.getElementById('codesMsg'),
+  showUsedBtn: document.getElementById('showUsedCodes'),
+  openLeaderboardBtn: document.getElementById('openLeaderboard'),
+  submitScoreBtn: document.getElementById('submitScore'),
+  openCodesBtn: document.getElementById('openCodes')
+};
 
-/* ---------- Number formatting (Undecillion then K + letters) ---------- */
+/* ---------- number formatting (KA KB after Undecillion) ---------- */
 function formatNumber(n){
-  if (!isFinite(n)) return '∞'
-  if(n < 1000) return Math.floor(n).toString()
-  const names = ["K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","Ud","Und"] // Und = undecillion (label)
-  const group = Math.floor(Math.log10(Math.max(1,n))/3)
-  const scaled = n / Math.pow(1000, group)
-  if(group <= names.length){
-    return scaled.toFixed(2) + names[group-1]
-  }
-  const idx = group - names.length - 1
-  const letters = numberToLetters(idx)
-  return scaled.toFixed(2) + 'K' + letters
+  if(!isFinite(n)) return '∞';
+  if(n < 1000) return Math.floor(n).toString();
+  const names = ["K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","Ud","Und"];
+  const group = Math.floor(Math.log10(Math.max(1,n))/3);
+  const scaled = n / Math.pow(1000, group);
+  if(group <= names.length) return scaled.toFixed(2) + names[group-1];
+  const idx = group - names.length - 1;
+  return scaled.toFixed(2) + 'K' + numberToLetters(idx);
 }
 function numberToLetters(i){
-  let s = ''
-  i = Math.max(0, i)
+  let s = '', n = i;
   while(true){
-    const rem = i % 26
-    s = String.fromCharCode(65 + rem) + s
-    i = Math.floor(i / 26) - 1
-    if(i < 0) break
+    const rem = n % 26;
+    s = String.fromCharCode(65 + rem) + s;
+    n = Math.floor(n / 26) - 1;
+    if(n < 0) break;
   }
-  return s
+  return s;
 }
 
-/* ---------- Production ---------- */
+/* ---------- production ---------- */
+function getBoostMultiplier(){
+  if(state.boost.active && Date.now() < state.boost.until) return 2;
+  if(state.boost.active && Date.now() >= state.boost.until){ state.boost.active = false; state.boost.until = 0; saveGame() }
+  return 1;
+}
 function getPerSecond(){
   const base =
     state.autoMiners*1 +
     state.megaMiners*10 +
     state.aiMiners*50 +
     state.factories*100 +
-    state.planets*1000
-  const mult = state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier
-  return Math.floor(base * mult)
+    state.planets*1000;
+  const mult = state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier * getBoostMultiplier();
+  return Math.floor(base * mult);
 }
 
-/* ---------- Audio: WebAudio for click + background ----- */
-const AudioContext = window.AudioContext || window.webkitAudioContext
-let audioCtx = null
-let bgGain = null
-let musicPlaying = false
-let bgInterval = null
+/* ---------- audio (simple) ---------- */
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let bgGain = null;
+let musicInterval = null;
+
 function ensureAudio(){
   if(!audioCtx){
-    audioCtx = new AudioContext()
-    bgGain = audioCtx.createGain()
-    bgGain.gain.value = 0.06
-    bgGain.connect(audioCtx.destination)
+    audioCtx = new AudioContext();
+    bgGain = audioCtx.createGain();
+    bgGain.gain.value = 0.06;
+    bgGain.connect(audioCtx.destination);
   }
 }
 function playClickSound(){
-  if(!state.settings.sound) return
-  ensureAudio()
-  const o = audioCtx.createOscillator()
-  const g = audioCtx.createGain()
-  o.type = 'triangle'
-  o.frequency.value = 880 + Math.random()*160
-  g.gain.value = 0.0001
-  o.connect(g); g.connect(audioCtx.destination)
-  g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01)
-  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2)
-  o.start(); o.stop(audioCtx.currentTime + 0.22)
+  if(!state.settings.sound) return;
+  ensureAudio();
+  if(audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'triangle';
+  o.frequency.value = 880 + Math.random()*120;
+  g.gain.value = 0.0001;
+  o.connect(g); g.connect(audioCtx.destination);
+  g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+  o.start(); o.stop(audioCtx.currentTime + 0.26);
 }
-function startMusic(){
-  if(!state.settings.music) return
-  ensureAudio()
-  if(musicPlaying) return
-  const notes = [220, 277.18, 329.63, 392, 523.25]
-  let idx = 0
-  bgInterval = setInterval(()=>{
-    const o = audioCtx.createOscillator()
-    const g = audioCtx.createGain()
-    o.type = 'sine'; o.frequency.value = notes[idx % notes.length]
-    g.gain.value = 0.0001
-    o.connect(g); g.connect(bgGain)
-    g.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 0.02)
-    g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.6)
-    o.start(); o.stop(audioCtx.currentTime + 0.62)
-    idx++
-  }, 500)
-  musicPlaying = true
+function startMusicLoop(){
+  if(!state.settings.music) return;
+  ensureAudio();
+  if(musicInterval) return;
+  const notes = [220,277.18,329.63,392,523.25];
+  let idx = 0;
+  musicInterval = setInterval(()=>{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = notes[idx % notes.length];
+    g.gain.value = 0.0001;
+    o.connect(g); g.connect(bgGain);
+    g.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.6);
+    o.start(); o.stop(audioCtx.currentTime + 0.62);
+    idx++;
+  }, 500);
 }
-function stopMusic(){
-  if(bgInterval) clearInterval(bgInterval)
-  musicPlaying = false
-}
+function stopMusicLoop(){ if(musicInterval){ clearInterval(musicInterval); musicInterval = null } }
 
-/* ---------- Visuals: particles & float gems ---------- */
-function spawnParticle(x,y,text,color='#bfe9ff'){ if(!state.settings.particles) return; const d=document.createElement('div'); d.className='particle'; d.style.left=x+'px'; d.style.top=y+'px'; d.style.color=color; d.innerText=text; document.body.appendChild(d); setTimeout(()=>d.remove(),900) }
-function spawnGemSprite(x,y){ if(!state.settings.particles) return; const g=document.createElement('div'); g.className='gem'; g.style.left=x+'px'; g.style.top=y+'px'; g.style.background = `radial-gradient(circle at 35% 25%, rgba(255,255,255,0.9), rgba(255,255,255,0.12) 6%), linear-gradient(135deg, #7cf 0%, #39f 100%)`; document.body.appendChild(g); setTimeout(()=>g.remove(),900) }
-function createFloatGems(){ const container = ui.floatContainer; container.innerHTML=''; for(let i=0;i<7;i++){ const el = document.createElement('div'); el.className='float-gem'; const color = ['#7cf','#39f','#6f9','#f9c','#f66','#fff','#c7f'][i%7]; el.style.background = color; el.style.left = (8 + i*12) + '%'; el.style.animationDuration = (6 + Math.random()*8) + 's'; el.style.animationDelay = (Math.random()*4) + 's'; el.style.borderRadius = '6px'; container.appendChild(el) } }
+/* ---------- particles & float gems ---------- */
+function spawnParticle(x,y,text,color='#bfe9ff'){ if(!state.settings.particles) return; const d = document.createElement('div'); d.className='particle'; d.style.left = x+'px'; d.style.top = y+'px'; d.style.color = color; d.innerText = text; document.body.appendChild(d); setTimeout(()=>d.remove(),900) }
+function spawnGemSprite(x,y){ if(!state.settings.particles) return; const g = document.createElement('div'); g.className='gem'; g.style.left = x+'px'; g.style.top = y+'px'; g.style.background = `radial-gradient(circle at 35% 25%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 6%), linear-gradient(135deg, #7cf 0%, #39f 100%)`; g.innerText = ''; document.body.appendChild(g); setTimeout(()=>g.remove(),900) }
+function createFloatGems(){ const container = ui.floatContainer; container.innerHTML = ''; for(let i=0;i<7;i++){ const el = document.createElement('div'); el.className='float-gem'; const color = ['#7cf','#39f','#6f9','#f9c','#f66','#fff','#c7f'][i%7]; el.style.background = color; el.style.left = (5 + i*13) + '%'; el.style.animationDuration = (6 + Math.random()*8) + 's'; el.style.animationDelay = (Math.random()*4) + 's'; el.style.borderRadius = '6px'; container.appendChild(el) } }
 
-/* ---------- Core actions ---------- */
+/* ---------- click handling ---------- */
 function handleClick(evt){
-  // unlock audio context for iOS on first gesture
-  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{})
-  const base = Math.max(1, state.clickPower) * state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier
-  let critChance = 0.06 + Math.max(0, state.prestigeMultiplier/2 - 0.0001); critChance = Math.min(0.25, critChance)
-  const crit = Math.random() < critChance; const critMult = crit ? (1 + 1 + (state.diamondTier+1)*0.1) : 1
-  const gain = Math.max(1, Math.floor(base * critMult))
-  state.gems += gain
-  playClickSound()
-  spawnParticle(evt.clientX, evt.clientY, (crit? '🔥':'') + '+' + formatNumber(gain))
-  spawnGemSprite(evt.clientX, evt.clientY)
-  updateUI()
+  // unlock audio due to user gesture policy
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+  const base = Math.max(1, state.clickPower) * state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier * getBoostMultiplier();
+  let critChance = 0.06 + Math.max(0, state.prestigeMultiplier/2 - 0.0001);
+  critChance = Math.min(0.25, critChance);
+  const crit = Math.random() < critChance;
+  const critMult = crit ? (1 + 1 + (state.diamondTier+1)*0.1) : 1;
+  const gain = Math.max(1, Math.floor(base * critMult));
+  state.gems += gain;
+  playClickSound();
+  spawnParticle(evt.clientX, evt.clientY, (crit? '🔥':'') + '+' + formatNumber(gain));
+  spawnGemSprite(evt.clientX, evt.clientY);
+  updateUI();
 }
+
+/* ---------- buy functions ---------- */
 function buyClick(){ if(state.gems >= state.clickCost){ state.gems -= state.clickCost; state.clickPower += 1; state.clickCost = Math.floor(state.clickCost * 1.55); updateUI() } }
 function buyAuto(){ if(state.gems >= state.autoCost){ state.gems -= state.autoCost; state.autoMiners++; state.autoCost = Math.floor(state.autoCost * 1.75); updateUI() } }
 function buyMega(){ if(state.gems >= state.megaCost){ state.gems -= state.megaCost; state.megaMiners++; state.megaCost = Math.floor(state.megaCost * 2); updateUI() } }
@@ -434,660 +478,309 @@ function buyPlanet(){ if(state.gems >= state.planetCost){ state.gems -= state.pl
 
 function buyTier(){
   if(state.gems >= state.tierCost){
-    state.gems -= state.tierCost
+    state.gems -= state.tierCost;
     if(state.tier < tiers.length - 1){
-      state.tier++
-      state.upgradeText = `Unlocked ${tiers[state.tier]}!`
+      state.tier++;
+      state.upgradeText = `Unlocked ${tiers[state.tier]}!`;
     } else {
       if(state.diamondTier < diamondColors.length - 1){
-        state.diamondTier++
-        state.clickPower = Math.max(1, Math.floor(state.clickPower * (1 + 0.5 + state.diamondTier*0.25)))
-        state.upgradeText = `Diamond color: ${diamondColors[state.diamondTier]}`
+        state.diamondTier++;
+        state.clickPower = Math.max(1, Math.floor(state.clickPower * (1 + 0.5 + state.diamondTier*0.25)));
+        state.upgradeText = `Diamond color: ${diamondColors[state.diamondTier]}`;
       } else {
-        state.upgradeText = 'Max diamond tier reached.'
+        state.upgradeText = 'Max diamond tier reached.';
       }
     }
-    state.tierCost = Math.floor(state.tierCost * 2)
-    updateUI()
+    state.tierCost = Math.floor(state.tierCost * 2);
+    updateUI();
   }
 }
 
-/* ---------- Crates ---------- */
+/* ---------- crates ---------- */
 function openCrate(type){
   if(type === 'basic'){
     const pool = [
       ()=> { state.gems += 50 + state.tier*10; return 'Small gem drop' },
       ()=> { state.clickPower += 1; return 'Click +1' },
       ()=> { state.autoMiners += 1; return 'Auto Miner +1' },
-    ]
-    const pick = pool[Math.floor(Math.random()*pool.length)]
-    const msg = pick(); state.upgradeText = `Crate: ${msg}`
+    ];
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    const msg = pick();
+    state.upgradeText = `Crate: ${msg}`;
   } else if(type === 'premium'){
     if(state.gems < 1000){ state.upgradeText = 'Need 1,000 gems for premium crate'; return }
-    state.gems -= 1000
+    state.gems -= 1000;
     const pool = [
       ()=> { state.gems += 5000; return 'Big gem bonus' },
       ()=> { state.clickPower += 5; return 'Click +5' },
       ()=> { state.prestigeMultiplier *= 1.5; return 'Prestige +50%' },
       ()=> { state.autoMiners += 5; return 'Autos +5' },
       ()=> { state.factories += 1; return 'Factory +1' },
-    ]
-    const pick = pool[Math.floor(Math.random()*pool.length)]; const msg = pick(); state.upgradeText = `Premium Crate: ${msg}`
+    ];
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    const msg = pick();
+    state.upgradeText = `Premium Crate: ${msg}`;
   }
-  updateUI()
+  updateUI();
 }
 
-/* ---------- Prestige ---------- */
-function rebirth(){ if(state.gems < 1e6){ state.upgradeText = 'Need 1,000,000 gems to Rebirth'; return } resetGame(); state.prestigeMultiplier *= 2; state.upgradeText = 'Rebirth complete: x2 prestige'; updateUI() }
-function galaxy(){ if(state.gems < 1e9){ state.upgradeText = 'Need 1B gems to Galaxy Reset'; return } resetGame(); state.prestigeMultiplier = 1; state.galaxyMultiplier *= 5; state.upgradeText = 'Galaxy Reset complete: x5 galaxy bonus'; updateUI() }
-function universe(){ if(state.gems < 1e12){ state.upgradeText = 'Need 1T gems to Universe Reset'; return } resetGame(); state.prestigeMultiplier = 1; state.galaxyMultiplier = 1; state.universeMultiplier *= 10; state.upgradeText = 'Universe Reset: x10 universe bonus'; updateUI() }
-function resetGame(){
-  state.gems = 0; state.tier = 0; state.diamondTier = -1
-  state.clickPower = 1; state.autoMiners = 0; state.megaMiners = 0; state.aiMiners = 0; state.factories = 0; state.planets = 0
-  state.clickCost = 10; state.autoCost = 50; state.megaCost = 500; state.aiCost = 2000; state.factoryCost = 5000; state.planetCost = 50000; state.tierCost = 200
-}
+/* ---------- prestige ---------- */
+function rebirth(){ if(state.gems < 1e6){ state.upgradeText = 'Need 1,000,000 gems to Rebirth'; return } resetGame(); state.prestigeMultiplier *= 2; state.upgradeText = 'Rebirth complete: x2 prestige'; updateUI(); }
+function galaxy(){ if(state.gems < 1e9){ state.upgradeText = 'Need 1B gems to Galaxy Reset'; return } resetGame(); state.prestigeMultiplier = 1; state.galaxyMultiplier *= 5; state.upgradeText = 'Galaxy Reset complete: x5 galaxy bonus'; updateUI(); }
+function universe(){ if(state.gems < 1e12){ state.upgradeText = 'Need 1T gems to Universe Reset'; return } resetGame(); state.prestigeMultiplier = 1; state.galaxyMultiplier = 1; state.universeMultiplier *= 10; state.upgradeText = 'Universe Reset: x10 universe bonus'; updateUI(); }
+function resetGame(){ state.gems=0; state.tier=0; state.diamondTier=-1; state.clickPower=1; state.autoMiners=0; state.megaMiners=0; state.aiMiners=0; state.factories=0; state.planets=0; state.clickCost=10; state.autoCost=50; state.megaCost=500; state.aiCost=2000; state.factoryCost=5000; state.planetCost=50000; state.tierCost=200; }
 
-/* ---------- Save / Load / Export / Import (unlimited offline) ---------- */
-function saveGame(){ try{ state.lastSave = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(state)) }catch(e){ console.error('Save failed', e) } }
+/* ---------- save/load/export/import ---------- */
+function saveGame(){
+  try{
+    state.lastSave = Date.now();
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  }catch(e){ console.error('Save failed', e) }
+}
 function loadGame(){
   try{
-    const raw = localStorage.getItem(SAVE_KEY)
-    if(!raw) return
-    const s = JSON.parse(raw)
-    if(typeof s.gems !== 'number') return
-    Object.assign(state, s)
-    // UNLIMITED offline: calculate full elapsed seconds and award ALL (no cap)
-    const elapsed = (Date.now() - (s.lastSave || Date.now())) / 1000
-    if(elapsed > 1){ // award if more than 1s elapsed
-      const perSec = getPerSecond()
-      const offlineGain = Math.floor(perSec * elapsed)
-      state.gems += offlineGain
-      state.upgradeText = `Offline +${formatNumber(offlineGain)} gems`
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    if(typeof s.gems !== 'number') return;
+    // anti-cheat: detect huge manual increases on import
+    if(window.__lastLoadedState && typeof window.__lastLoadedState.gems === 'number'){
+      const prev = window.__lastLoadedState;
+      const elapsed = (Date.now() - (prev.lastSave || Date.now()))/1000;
+      const expected = Math.max(0, getPerSecond()*Math.max(0, elapsed));
+      // allow very large legitimate increases but flag wildly impossible jumps:
+      if(s.gems > prev.gems + expected * 1000 + 1e9){
+        state.cheatDetected = true;
+        console.warn('Cheat detected: imported save jumps too high');
+      }
     }
+    Object.assign(state, s);
+    // apply offline gains (unlimited per your request)
+    const elapsed = (Date.now() - (s.lastSave || Date.now())) / 1000;
+    if(elapsed > 5){
+      const perSec = getPerSecond();
+      const offlineGain = Math.floor(perSec * elapsed); // no cap
+      state.gems += offlineGain;
+      state.upgradeText = `Offline +${formatNumber(offlineGain)} gems`;
+    }
+    window.__lastLoadedState = Object.assign({}, state); // snapshot for future anti-cheat checks
   }catch(e){ console.error('Load failed', e) }
 }
-function exportSave(){ document.getElementById('importBox').value = JSON.stringify(state); alert('Save exported to the box. Copy to backup.') }
-function importSave(){ try{ const raw = document.getElementById('importBox').value.trim(); if(!raw){ alert('Paste JSON into box'); return } const s = JSON.parse(raw); if(typeof s.gems !== 'number'){ alert('Invalid save'); return } Object.assign(state, s); saveGame(); updateUI(); alert('Imported') }catch(e){ alert('Invalid JSON') } }
+function exportSave(){ document.getElementById('importBox').value = JSON.stringify(state); alert('Exported save to the box. Copy it to backup.') }
+function importSave(){ try{ const raw = document.getElementById('importBox').value.trim(); if(!raw){ alert('Paste JSON then import'); return } const s = JSON.parse(raw); if(typeof s.gems !== 'number'){ alert('Invalid save'); return } // anti-cheat quick heuristic
+    if(window.__lastLoadedState && s.gems > window.__lastLoadedState.gems + getPerSecond()*3600*24*30 + 1e9){ state.cheatDetected = true; alert('Import flagged as suspicious and leaderboard disabled.'); }
+    Object.assign(state, s); saveGame(); updateUI(); alert('Imported'); }catch(e){ alert('Invalid JSON') } }
 
-/* ---------- Local leaderboard fallback ---------- */
-const LB_KEY = 'gemclicker_v4_leaderboard_local'
-function submitLocalScore(name,score){
-  const raw = localStorage.getItem(LB_KEY); const list = raw ? JSON.parse(raw) : []
-  list.push({name,score,time:Date.now()}); list.sort((a,b)=>b.score-a.score)
-  const top = list.slice(0,10); localStorage.setItem(LB_KEY, JSON.stringify(top)); renderLeaderboard(top)
+/* ---------- leaderboard local fallback ---------- */
+function submitLocalScore(name){
+  const n = (name || 'Anon').slice(0,16);
+  const score = Math.floor(state.gems);
+  const raw = localStorage.getItem(LB_KEY); const list = raw ? JSON.parse(raw) : [];
+  list.push({name:n,score,when:Date.now()});
+  list.sort((a,b)=>b.score-a.score);
+  localStorage.setItem(LB_KEY, JSON.stringify(list.slice(0,50)));
+  renderLeaderboard();
 }
-function renderLeaderboard(list){
-  const target = ui.leaderboard
-  target.innerHTML = ''
-  const rows = list || (localStorage.getItem(LB_KEY) ? JSON.parse(localStorage.getItem(LB_KEY)) : [])
-  if(rows.length === 0){ target.innerHTML = '<div class="small">No scores yet</div>'; return }
-  rows.forEach((r,i)=>{ const d = document.createElement('div'); d.className='row'; d.style.marginTop='6px'; d.innerHTML = `<div style="font-weight:700">${i+1}. ${escapeHtml(r.name)}</div><div>${formatNumber(r.score)}</div>`; target.appendChild(d) })
+function renderLeaderboard(remoteList){
+  ui.leaderboard.innerHTML = '';
+  let list = remoteList || JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+  if(list.length === 0){ ui.leaderboard.innerHTML = '<div class="small">No scores yet</div>'; return; }
+  list.slice(0,20).forEach((row,i)=> {
+    const div = document.createElement('div'); div.style.display='flex'; div.style.justifyContent='space-between'; div.style.marginTop='6px';
+    div.innerHTML = `<div style="font-weight:600">${i+1}. ${escapeHtml(row.name)}</div><div>${formatNumber(row.score)}</div>`;
+    ui.leaderboard.appendChild(div);
+  });
 }
 
-/* ---------- Escape helper ---------- */
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) }
-
-/* ---------- Optional Firebase leaderboard (same as before) ---------- */
-let firebaseApp = null, firestore = null, fbEnabled = false
+/* ---------- firebase optional (CDN modular) ----------
+   If you paste firebaseConfig JSON into settings, the code will try to load Firebase
+   and fetch the top 50 docs from 'leaderboard' collection.
+   See Firebase web setup docs if you need help. (Optional)  */
+let fbEnabled = false, firebaseApp = null, firestore = null;
 async function enableFirebase(cfg){
   try{
-    if(!cfg) throw new Error('no cfg')
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js')
-    const { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js')
-    firebaseApp = initializeApp(cfg); firestore = getFirestore(firebaseApp); fbEnabled = true; state.firebaseEnabled = true
-    await fetchFirebaseLeaderboard()
-    state.upgradeText = 'Firebase enabled'
-  }catch(e){ console.error('Firebase failed', e); fbEnabled = false; state.firebaseEnabled = false; alert('Firebase init failed — falling back to local leaderboard') }
+    if(!cfg) throw new Error('no cfg');
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js');
+    const { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js');
+    firebaseApp = initializeApp(cfg);
+    firestore = getFirestore(firebaseApp);
+    fbEnabled = true;
+    fetchFirebaseLeaderboard();
+    state.upgradeText = 'Firebase connected';
+    saveGame();
+  }catch(e){ console.error('Firebase init failed', e); fbEnabled=false; state.upgradeText='Firebase init failed (using local LB)'; }
 }
-async function submitFirebaseScore(name,score){
-  if(!fbEnabled || !firestore) return submitLocalScore(name,score)
+async function submitFirebaseScore(name, score){
+  if(!fbEnabled || state.cheatDetected) return submitLocalScore(name);
   try{
-    const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js')
-    await addDoc(collection(firestore,'leaderboard'),{ player:name, score:score, time:Date.now() })
-    await fetchFirebaseLeaderboard()
-  }catch(e){ console.error('submit firebase',e); submitLocalScore(name,score) }
+    const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js');
+    await addDoc(collection(firestore,'leaderboard'), { player: name, score: score, time: Date.now() });
+    await fetchFirebaseLeaderboard();
+  }catch(e){ console.error(e); submitLocalScore(name); }
 }
-async function fetchFirebaseLeaderboard(){ if(!fbEnabled || !firestore) return renderLeaderboard(); try{ const { collection, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js'); const q = query(collection(firestore,'leaderboard'), orderBy('score','desc'), limit(10)); const snap = await getDocs(q); const rows=[]; snap.forEach(doc=>rows.push({name:doc.data().player, score:doc.data().score})); renderLeaderboard(rows) }catch(e){ console.error('fetch fb',e); renderLeaderboard() } }
-
-/* ---------- UI update ---------- */
-function updateUI(){
-  ui.gems.innerText = formatNumber(state.gems)
-  ui.gemType.innerText = tiers[state.tier]
-  ui.clickPower.innerText = formatNumber(state.clickPower)
-  ui.perSec.innerText = formatNumber(getPerSecond())
-  ui.clickCost.innerText = formatNumber(state.clickCost || 10)
-  ui.autoCost.innerText = formatNumber(state.autoCost || 50)
-  ui.megaCost.innerText = formatNumber(state.megaCost || 500)
-  ui.aiCost.innerText = formatNumber(state.aiCost || 2000)
-  ui.factoryCost.innerText = formatNumber(state.factoryCost || 5000)
-  ui.planetCost.innerText = formatNumber(state.planetCost || 50000)
-  ui.tierCost.innerText = formatNumber(state.tierCost || 200)
-  ui.diamondTier.innerText = state.diamondTier >= 0 ? diamondColors[state.diamondTier] : 'None'
-  ui.autoCount.innerText = state.autoMiners
-  ui.megaCount.innerText = state.megaMiners
-  ui.aiCount.innerText = state.aiMiners
-  ui.factoryCount.innerText = state.factories
-  ui.planetCount.innerText = state.planets
-  document.getElementById('upgradeText').innerText = state.upgradeText || ''
-}
-
-/* ---------- Intervals ---------- */
-// per-second production
-setInterval(()=>{ const gain = getPerSecond(); state.gems += gain; updateUI() }, 1000)
-// autosave
-setInterval(saveGame, 5000)
-// leaderboard auto-refresh (1 minute)
-setInterval(()=>{ if(state.firebaseEnabled) fetchFirebaseLeaderboard(); else renderLeaderboard(); }, 60000)
-
-/* ---------- Bind UI ---------- */
-ui.mineBtn.addEventListener('click', handleClick)
-document.getElementById('buyClick').addEventListener('click', buyClick)
-document.getElementById('buyAuto').addEventListener('click', buyAuto)
-document.getElementById('buyMega').addEventListener('click', buyMega)
-document.getElementById('buyAI').addEventListener('click', buyAI)
-document.getElementById('buyFactory').addEventListener('click', buyFactory)
-document.getElementById('buyPlanet').addEventListener('click', buyPlanet)
-document.getElementById('buyTier').addEventListener('click', buyTier)
-document.getElementById('rebirth').addEventListener('click', rebirth)
-document.getElementById('galaxy').addEventListener('click', galaxy)
-document.getElementById('universe').addEventListener('click', universe)
-document.getElementById('exportSave').addEventListener('click', exportSave)
-document.getElementById('importSave').addEventListener('click', importSave)
-document.getElementById('crateOpen').addEventListener('change',(ev)=>{ if(ev.target.value==='basic') openCrate('basic'); else if(ev.target.value==='premium') openCrate('premium'); ev.target.value='none' })
-ui.submitScoreBtn.addEventListener('click', ()=>{ const name = (ui.playerName.value.trim().slice(0,16) || 'Anon'); ui.playerName.value=''; if(state.firebaseEnabled) submitFirebaseScore(name, Math.floor(state.gems)); else submitLocalScore(name, Math.floor(state.gems)) })
-
-/* settings toggles */
-ui.openSettings.addEventListener('click', ()=>{ /* simplified: toggles are inline on main UI */ alert('Settings are available on the right panel: toggle Click Sound and Music there.') })
-ui.toggleSound.addEventListener('change', ()=>{ state.settings.sound = ui.toggleSound.checked; saveGame() })
-ui.toggleMusic.addEventListener('change', ()=>{ state.settings.music = ui.toggleMusic.checked; if(ui.toggleMusic.checked){ startMusic() } else { stopMusic() }; saveGame() })
-ui.toggleParticles.addEventListener('change', ()=>{ state.settings.particles = ui.toggleParticles.checked; saveGame() })
-
-/* menu buttons */
-ui.playBtn.addEventListener('click', ()=>{ // dismiss menu, reveal app
-  document.getElementById('menuOverlay').style.display = 'none'
-  ui.app.setAttribute('aria-hidden','false')
-  // resume audio on first user interaction if needed
-  if(state.settings.music) startMusic()
-})
-ui.creditsBtn.addEventListener('click', ()=>{ ui.creditsBlock.style.display = ui.creditsBlock.style.display === 'none' ? 'block' : 'none' })
-
-/* leaderboard modal */
-ui.openLeaderboard.addEventListener('click', ()=>{ ui.leaderboardModal.classList.add('show'); ui.leaderboardModal.setAttribute('aria-hidden','false'); if(state.firebaseEnabled) fetchFirebaseLeaderboard(); else renderLeaderboard() })
-ui.closeLB.addEventListener('click', ()=>{ ui.leaderboardModal.classList.remove('show'); ui.leaderboardModal.setAttribute('aria-hidden','true') })
-ui.refreshLB.addEventListener('click', ()=>{ if(state.firebaseEnabled) fetchFirebaseLeaderboard(); else renderLeaderboard() })
-
-/* ---------- Floating gems visuals ---------- */
-createFloatGems()
-
-/* ---------- Load + init ---------- */
-loadGame()
-renderLeaderboard()
-updateUI()
-const cfg = localStorage.getItem('firebaseConfig')
-if(cfg){
-  try{ enableFirebase(JSON.parse(cfg)) }catch(e){ console.warn('stored firebase config invalid') }
-}
-
-/* ensure music unlock on first tap */
-document.addEventListener('click', ()=>{ if(state.settings.music) startMusic(); if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}) }, { once:true })
-
-/* export for debug */
-window.__GEM_STATE = state
-window.__GC_export = ()=>JSON.stringify(state)
-window.__GC_import = (s)=>{ Object.assign(state, JSON.parse(s)); saveGame(); updateUI() }
-</script>
-</body>
-</html>
-/* ---------- BEGIN: Anti-cheat + Codes + Arachnophobia patch ---------- */
-
-/* ----- UI: add Codes button + modal + spider element ----- */
-/* If your HTML doesn't have a Codes button already, create one dynamically */
-(function insertCodesUI(){
-  // add Codes button to controls area (safe: add to top of document)
-  const controls = document.querySelector('.controls') || document.body
-  const row = document.createElement('div'); row.className = 'action-row'; 
-  const codesBtn = document.createElement('button'); codesBtn.id = 'codesBtn'; codesBtn.className='action-btn'; codesBtn.innerText = 'Codes';
-  row.appendChild(codesBtn)
-  // insert as first child of controls if possible
-  if(controls && controls.firstChild) controls.insertBefore(row, controls.firstChild)
-  else controls.appendChild(row)
-
-  // create modal
-  const modal = document.createElement('div'); modal.id = 'codesModal'; modal.className='modal'
-  modal.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <strong>Enter Code</strong>
-      <button id="closeCodes" class="action-btn" style="min-width:40px;padding:6px">X</button>
-    </div>
-    <div style="margin-top:8px">
-      <input id="codeInput" class="small-input" placeholder="Enter code (case-insensitive)" style="width:100%">
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button id="redeemCodeBtn" class="action-btn" style="flex:1">Redeem</button>
-        <button id="showRedeemed" class="action-btn" style="flex:1">Redeemed</button>
-      </div>
-      <div id="codesMsg" class="small" style="margin-top:8px"></div>
-    </div>
-  `
-  document.body.appendChild(modal)
-
-  // spider element (hidden by default)
-  const spider = document.createElement('div'); spider.id = 'spiderElem'
-  spider.style.position = 'fixed'; spider.style.left = '8px'; spider.style.top = '8px';
-  spider.style.width='56px'; spider.style.height='56px'; spider.style.borderRadius='8px';
-  spider.style.display='none'; spider.style.zIndex='20000'; spider.style.cursor='pointer';
-  spider.style.background = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\"><circle cx=\"32\" cy=\"32\" r=\"28\" fill=\"%23000\" /><path d=\"M32 14 L36 28 L50 32 L36 36 L32 50 L28 36 L14 32 L28 28 Z\" fill=\"%23fff\" opacity=\"0.05\"/></svg>') no-repeat center/cover";
-  document.body.appendChild(spider)
-
-  // speech bubble container for the spider
-  const bubble = document.createElement('div'); bubble.id='spiderBubble'
-  bubble.style.position='fixed'; bubble.style.left='72px'; bubble.style.top='12px'; bubble.style.zIndex='20001';
-  bubble.style.padding='8px 10px'; bubble.style.borderRadius='10px'; bubble.style.background='rgba(0,0,0,0.7)';
-  bubble.style.color='white'; bubble.style.display='none'; bubble.style.maxWidth='220px'; bubble.style.fontSize='13px'
-  document.body.appendChild(bubble)
-
-  // bindings
-  codesBtn.addEventListener('click', ()=> { modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); document.getElementById('codeInput').focus(); })
-  document.getElementById('closeCodes').addEventListener('click', ()=> { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); })
-  document.getElementById('showRedeemed').addEventListener('click', ()=>{
-    const list = Array.from(getRedeemedCodes()).join(', ') || 'None'
-    document.getElementById('codesMsg').innerText = 'Redeemed: ' + list
-  })
-
-  spider.addEventListener('click', ()=> {
-    handleSpiderClick()
-  })
-
-})();
-
-/* ----- Persistence additions: saveHistory & tamper-detection ----- */
-const BACKUP_KEY = SAVE_KEY + '_history'
-const CHECKSUM_KEY = SAVE_KEY + '_checksum'
-const MAX_BACKUPS = 6
-let saveBackups = loadBackups() // array of previous states
-
-function loadBackups(){
+async function fetchFirebaseLeaderboard(){
+  if(!fbEnabled) return renderLeaderboard();
   try{
-    const raw = localStorage.getItem(BACKUP_KEY)
-    if(!raw) return []
-    return JSON.parse(raw)
-  }catch(e){ return [] }
+    const { collection, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js');
+    const q = query(collection(firestore,'leaderboard'), orderBy('score','desc'), limit(50));
+    const snap = await getDocs(q);
+    const rows = [];
+    snap.forEach(doc => rows.push({ name: doc.data().player, score: doc.data().score }));
+    renderLeaderboard(rows);
+  }catch(e){ console.error('Fetch LB failed', e); renderLeaderboard(); }
 }
 
-function pushBackup(stateSnapshot){
-  try{
-    const snap = JSON.stringify(stateSnapshot)
-    saveBackups.unshift({t:Date.now(), snap})
-    if(saveBackups.length > MAX_BACKUPS) saveBackups.length = MAX_BACKUPS
-    localStorage.setItem(BACKUP_KEY, JSON.stringify(saveBackups))
-  }catch(e){ console.error('backup failed', e) }
-}
-
-/* Non-cryptographic checksum (djb2) for tamper detection */
-function checksumOf(str){
-  let hash = 5381
-  for(let i=0;i<str.length;i++){
-    hash = ((hash << 5) + hash) + str.charCodeAt(i)
-    hash = hash & 0xFFFFFFFF
+/* ---------- codes system ---------- */
+const codes = {
+  'Bernerd': ()=> { grantCurrency(500); return 'Bernerd redeemed: +500'; },
+  'Kayden': ()=> { grantCurrency(500); return 'Kayden redeemed: +500'; },
+  '67': ()=> { grantCurrency(67); return '67 redeemed: +67'; },
+  'Release': ()=> { grantCurrency(750); return 'Release redeemed: +750'; },
+  '69': ()=> { grantCurrency(69); return '69 redeemed: +69'; },
+  'Boost': ()=> { state.boost.active = true; state.boost.until = Date.now() + 1000*(3*60 + 59); saveGame(); return 'Boost redeemed: 2x for 3:59'; },
+  'Arachnophobia': ()=> { // spawn spider peek (we already have spider) -> award just a small gem
+      grantCurrency(10);
+      return 'Arachnophobia: spider appeared (+10 gems)';
   }
-  return (hash >>> 0).toString(16)
-}
-    
-function computeStateChecksum(s){
-  // include only trusted fields we expect to persist
-  const pick = {
-    gems: s.gems,
-    clickPower: s.clickPower,
-    autoMiners: s.autoMiners,
-    megaMiners: s.megaMiners,
-    aiMiners: s.aiMiners,
-    factories: s.factories,
-    planets: s.planets,
-    tier: s.tier,
-    diamondTier: s.diamondTier,
-    prestigeMultiplier: s.prestigeMultiplier,
-    galaxyMultiplier: s.galaxyMultiplier,
-    universeMultiplier: s.universeMultiplier,
-    redeemed: Array.from(getRedeemedCodes ? getRedeemedCodes() : [])
-  }
-  return checksumOf(JSON.stringify(pick))
+};
+function grantCurrency(n){ state.gems += n; updateUI(); saveGame(); }
+function redeemCode(input){
+  const key = (input || '').trim();
+  if(!key) return 'Enter code';
+  if(state.usedCodes.includes(key)) return 'Code already used';
+  const fn = codes[key];
+  if(!fn) return 'Invalid code';
+  const msg = fn();
+  state.usedCodes.push(key);
+  saveGame();
+  return msg;
 }
 
-/* Wrap existing saveGame with backup + checksum */
-const _oldSaveGame = window.saveGame
-window.saveGame = function(){
-  try{
-    // push pre-save backup of current state
-    try{ pushBackup(JSON.parse(JSON.stringify(state))) }catch(e){}
-  }catch(e){}
-  // call original save
-  if(typeof _oldSaveGame === 'function') _oldSaveGame()
-  // compute and store checksum after saving
-  try{
-    const cs = computeStateChecksum(state)
-    localStorage.setItem(CHECKSUM_KEY, cs)
-  }catch(e){ console.warn('checksum store failed') }
-}
-
-/* tamper detection during load */
-const _oldLoadGame = window.loadGame
-window.loadGame = function(){
-  // call old load (which merges state and applies offline gains)
-  if(typeof _oldLoadGame === 'function') _oldLoadGame()
-  // after load, verify checksum (if exists)
-  try{
-    const savedChecksum = localStorage.getItem(CHECKSUM_KEY)
-    const current = computeStateChecksum(state)
-    if(savedChecksum && savedChecksum !== current){
-      // possible tampering detected
-      console.warn('Tamper detected: checksum mismatch', savedChecksum, current)
-      // attempt to auto-rollback to last valid backup that matches checksum
-      let restored = false
-      for(const b of saveBackups){
-        try{
-          const snapState = JSON.parse(b.snap)
-          const csb = computeStateChecksum(snapState)
-          if(csb === savedChecksum){
-            // restore
-            Object.assign(state, snapState)
-            saveGame() // will push a backup and update checksum
-            restored = true
-            state.upgradeText = 'Save tamper detected — restored last valid backup.'
-            break
-          }
-        }catch(e){}
-      }
-      if(!restored){
-        // if we can't find a matching backup, show warning and keep loaded data but mark flagged
-        state.upgradeText = 'Warning: Save integrity check failed. Manual restore available from backups.'
-        console.warn('Could not auto-restore to a matching backup. Backups available:', saveBackups.length)
-      }
-      updateUI()
-    }
-  }catch(e){ console.error('tamper check failed', e) }
-}
-
-/* Expose a method to view backups (useful for debugging) */
-window.__GEM_backups = ()=> saveBackups
-
-/* ----- Redeem Codes system ----- */
-const CODE_REDEEMS_KEY = SAVE_KEY + '_redeemed'
-let _redeemed = new Set(JSON.parse(localStorage.getItem(CODE_REDEEMS_KEY) || '[]'))
-
-function getRedeemedCodes(){ return new Set(Array.from(_redeemed)) }
-function markRedeemed(code){
-  _redeemed.add(code)
-  localStorage.setItem(CODE_REDEEMS_KEY, JSON.stringify(Array.from(_redeemed)))
-  // update checksum because redeemed codes are part of trusted state
-  try{ localStorage.setItem(CHECKSUM_KEY, computeStateChecksum(state)) }catch(e){}
-}
-
-/* throttling */
-let lastRedeemAt = 0
-const REDEEM_MIN_INTERVAL = 1000 * 2 // 2 seconds between redeems to throttle spam
-
-/* codes definition (case-insensitive) */
-const CODES = {
-  'BERNERD': {type:'one-time', action: ()=> grantGems(500), message:'Bernerd reward: +500 gems'},
-  'KAYDEN': {type:'one-time', action: ()=> grantGems(500), message:'Kayden reward: +500 gems'},
-  '67': {type:'one-time', action: ()=> grantGems(67), message:'67 reward: +67 gems'},
-  'RELEASE': {type:'one-time', action: ()=> grantGems(750), message:'Release reward: +750 gems'},
-  '69': {type:'one-time', action: ()=> grantGems(69), message:'69 reward: +69 gems'},
-  'BOOST': {type:'one-time', action: ()=> applyBoost(2, 239), message:'Boost activated: 2x for 3:59'},
-  'ARACHNOPHOBIA': {type:'one-time', action: ()=> spawnArachnid(), message:'Arachnophobia activated! A spider has appeared.'}
-}
-
-/* redeem function */
-function redeemCode(raw){
-  const now = Date.now()
-  if(now - lastRedeemAt < REDEEM_MIN_INTERVAL){
-    showCodesMsg('Slow down — try again in a few seconds.')
-    return
-  }
-  lastRedeemAt = now
-  if(!raw || typeof raw !== 'string'){ showCodesMsg('Enter a code.') ; return }
-  const code = raw.trim().toUpperCase()
-  if(_redeemed.has(code)){
-    showCodesMsg('Code already redeemed.')
-    return
-  }
-  const entry = CODES[code]
-  if(!entry){
-    showCodesMsg('Invalid code.')
-    return
-  }
-  // execute reward
-  try{
-    entry.action()
-    markRedeemed(code)
-    showCodesMsg(entry.message + ' (Redeemed)')
-    pushBackup(JSON.parse(JSON.stringify(state))) // backup after redeem
-    saveGame()
-    updateUI()
-  }catch(e){
-    console.error('redeem failed', e)
-    showCodesMsg('Failed to redeem code — try again.')
-  }
-}
-
-/* helper UI message */
-function showCodesMsg(msg){
-  const el = document.getElementById('codesMsg')
-  if(el) el.innerText = msg
-  else alert(msg)
-}
-
-/* Hook redeem button and input */
-(function hookRedeemUI(){
-  const redeemBtn = document.getElementById('redeemCodeBtn')
-  const codeInput = document.getElementById('codeInput')
-  if(redeemBtn && codeInput){
-    redeemBtn.addEventListener('click', ()=> redeemCode(codeInput.value))
-    codeInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ redeemCode(codeInput.value) } })
-  }
-})();
-
-/* helper: grant gems safely */
-function grantGems(n){
-  if(!Number.isFinite(n) || n <= 0) return
-  // small anti-cheat clamp: if someone tries to pass huge negative or NaN
-  n = Math.max(0, Math.floor(n))
-  state.gems = (Number(state.gems) || 0) + n
-  state.upgradeText = `Granted ${formatNumber(n)} gems`
-  updateUI()
-  saveGame()
-}
-
-/* ----- Boosts implementation (persistent) ----- */
-if(!state.activeBoosts) state.activeBoosts = []
-
-function applyBoost(multiplier = 2, durationSec = 239){
-  // add an active boost entry with expire timestamp
-  const expiresAt = Date.now() + Math.max(1000, durationSec*1000)
-  state.activeBoosts = state.activeBoosts || []
-  state.activeBoosts.push({multiplier, expiresAt})
-  state.upgradeText = `Boost x${multiplier} for ${Math.floor(durationSec/60)}:${('0'+(durationSec%60)).slice(-2)}`
-  recomputeBoostMultiplier()
-  saveGame()
-  // schedule cleanup timer local-only (in case of reload, loadGame will recompute)
-  scheduleBoostCleanup()
-}
-
-/* recompute boost multiplier from activeBoosts */
-function recomputeBoostMultiplier(){
-  const now = Date.now()
-  let mult = 1
-  state.activeBoosts = state.activeBoosts.filter(b => b.expiresAt > now)
-  for(const b of state.activeBoosts) mult *= b.multiplier
-  state.boostMultiplier = mult
-}
-
-/* apply boost multiplier into click/perSec — integrate into existing functions */
-/* We patch getPerSecond and click handler to account for state.boostMultiplier.
-   If your original getPerSecond was used elsewhere, it's already defined; we wrap it. */
-
-const _origGetPerSecond = window.getPerSecond
-window.getPerSecond = function(){
-  let base = 0
-  if(typeof _origGetPerSecond === 'function') base = _origGetPerSecond()
-  const boost = Number(state.boostMultiplier) || 1
-  return Math.floor(base * boost)
-}
-
-/* adjust click calculation to include boost multiplier (wrap old handler) */
-const _oldHandleClick = window.handleClick
-window.handleClick = function(e){
-  // call the original click handler logic if present to preserve crit logic etc
-  // but we want to ensure boost multiplier is included in click rewards: modify state temporarily
-  const oldBoost = state.boostMultiplier || 1
-  recomputeBoostMultiplier()
-  // The existing handleClick logic references state.boostMultiplier? If not, we patch by calling original then applying boost if necessary
-  if(typeof _oldHandleClick === 'function'){
-    _oldHandleClick(e)
-  } else {
-    // fallback: replicate basic click logic if original missing
-    const base = Math.max(1, state.clickPower) * state.prestigeMultiplier * state.galaxyMultiplier * state.universeMultiplier
-    const critChance = 0.06
-    const crit = Math.random() < critChance
-    const gain = Math.floor(base * (crit?2:1) * (state.boostMultiplier || 1))
-    state.gems += gain
-    spawnParticle(e.clientX, e.clientY, (crit? '🔥':'')+'+'+formatNumber(gain))
-    updateUI()
-  }
-  // restore if needed (no change)
-}
-
-/* schedule cleanup timers for boosts that were loaded from save */
-let boostCleanupTimer = null
-function scheduleBoostCleanup(){
-  if(boostCleanupTimer) clearTimeout(boostCleanupTimer)
-  const now = Date.now()
-  // find next expiration
-  const next = (state.activeBoosts || []).reduce((min,b)=> b.expiresAt>now && (min===null||b.expiresAt<min)? b.expiresAt : min, null)
-  if(next){
-    const delay = Math.max(1, next - now + 50)
-    boostCleanupTimer = setTimeout(()=>{ recomputeBoostMultiplier(); saveGame(); updateUI(); scheduleBoostCleanup() }, delay)
-  }
-}
-
-/* init recompute + schedule after load */
-recomputeBoostMultiplier()
-scheduleBoostCleanup()
-
-/* ----- Arachnophobia spider behaviour ----- */
-let spiderVisible = false
-function spawnArachnid(){
-  const spider = document.getElementById('spiderElem')
-  if(!spider) return
-  spiderVisible = true
-  spider.style.display = 'block'
-  state.hasSpider = true
-  saveGame()
-}
-
-/* Spider dialogue weighted probabilities:
-   Provided weights: 1/2, 1/4, 1/6, 1/10, 1/50 -> translate to weights
-*/
-const spiderPhrases = [
+/* ---------- spider (Arachnophobia) behavior ---------- */
+const spiderMessages = [
   {text:'Hi!', weight: 1/2},
   {text:'Hello!', weight: 1/4},
   {text:'How are you!', weight: 1/6},
   {text:'How did you find me?', weight: 1/10},
   {text:'We need… we need, MONEY! YOU DUMB FOOL!', weight: 1/50}
-]
-const totalWeight = spiderPhrases.reduce((s,p)=> s + (p.weight || 0), 0)
-function pickSpiderPhrase(){
-  let r = Math.random() * totalWeight
-  for(const p of spiderPhrases){
-    if(r < p.weight) return p.text
-    r -= p.weight
+];
+function spiderPick(){
+  // normalize weights then pick
+  const arr = spiderMessages;
+  const sum = arr.reduce((s,a)=>s + (a.weight || 0), 0);
+  let r = Math.random() * sum;
+  for(let i=0;i<arr.length;i++){
+    r -= arr[i].weight;
+    if(r <= 0) return arr[i].text;
   }
-  return spiderPhrases[0].text
+  return arr[arr.length-1].text;
 }
 
-function handleSpiderClick(){
-  const bubble = document.getElementById('spiderBubble')
-  const phrase = pickSpiderPhrase()
-  bubble.innerText = phrase
-  bubble.style.display = 'block'
-  setTimeout(()=> bubble.style.display = 'none', 2000 + Math.random()*1200)
-  // optionally small reaction: if last phrase (the angry one) show extra effect
-  if(phrase.includes('MONEY')){
-    // give an animation clap or tiny gem drop to taunt player
-    spawnParticle(40, 40, '💰', '#ffd700')
-  }
-  saveGame()
+/* ---------- UI events and bindings ---------- */
+document.getElementById('crateOpen').addEventListener('change', e=>{ if(e.target.value==='basic') openCrate('basic'); else if(e.target.value==='premium') openCrate('premium'); e.target.value='none'; });
+document.getElementById('buyClick').addEventListener('click', buyClick);
+document.getElementById('buyAuto').addEventListener('click', buyAuto);
+document.getElementById('buyMega').addEventListener('click', buyMega);
+document.getElementById('buyAI').addEventListener('click', buyAI);
+document.getElementById('buyFactory').addEventListener('click', buyFactory);
+document.getElementById('buyPlanet').addEventListener('click', buyPlanet);
+document.getElementById('buyTier').addEventListener('click', buyTier);
+document.getElementById('rebirth').addEventListener('click', rebirth);
+document.getElementById('galaxy').addEventListener('click', galaxy);
+document.getElementById('universe').addEventListener('click', universe);
+ui.exportSaveBtn.addEventListener('click', exportSave);
+ui.importSaveBtn.addEventListener('click', importSave);
+ui.mineBtn.addEventListener('click', handleClick);
+ui.openSettingsBtn.addEventListener('click', ()=>{ ui.settingsModal.classList.add('show'); ui.firebaseConfigBox.value = localStorage.getItem('firebaseConfig') || ''; });
+ui.closeSettings.addEventListener('click', ()=>{ ui.settingsModal.classList.remove('show'); });
+ui.saveSettingsBtn.addEventListener('click', ()=> {
+  state.settings.sound = ui.toggleSound.checked;
+  state.settings.music = ui.toggleMusic.checked;
+  localStorage.setItem('firebaseConfig', ui.firebaseConfigBox.value.trim());
+  if(ui.firebaseConfigBox.value.trim()){ try{ const cfg = JSON.parse(ui.firebaseConfigBox.value.trim()); enableFirebase(cfg);}catch(e){ alert('Invalid firebase JSON'); } }
+  ui.settingsModal.classList.remove('show'); saveGame();
+});
+ui.clearFirebaseBtn.addEventListener('click', ()=>{ localStorage.removeItem('firebaseConfig'); state.firebaseEnabled = false; alert('Firebase disabled'); });
+
+document.getElementById('submitScore').addEventListener('click', ()=> {
+  const name = (ui.playerName.value.trim().slice(0,16) || 'Anon');
+  if(state.cheatDetected){ alert('Cheating detected — leaderboard disabled for this session'); return; }
+  if(fbEnabled) submitFirebaseScore(name, Math.floor(state.gems)); else submitLocalScore(name);
+  ui.playerName.value = '';
+});
+
+ui.openLeaderboardBtn.addEventListener('click', ()=> { // open leaderboard view: focus it
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderLeaderboard();
+});
+
+ui.openCodesBtn.addEventListener('click', ()=>{ ui.codesModal.classList.add('show'); });
+document.getElementById('closeCodes').addEventListener('click', ()=>{ ui.codesModal.classList.remove('show'); });
+ui.redeemCodeBtn.addEventListener('click', ()=>{ const inpt = ui.codeInput.value.trim(); const res = redeemCode(inpt); ui.codesMsg.innerText = res; ui.codeInput.value = ''; });
+ui.showUsedBtn.addEventListener('click', ()=>{ alert('Used codes: ' + (state.usedCodes.join(', ') || 'None')) });
+
+document.getElementById('startGame').addEventListener('click', ()=>{ document.getElementById('menu').style.display = 'none'; if(state.settings.music) startMusicLoop(); saveGame(); });
+ui.openCredits.addEventListener('click', ()=>{ ui.creditsModal.classList.add('show'); });
+ui.closeCredits.addEventListener('click', ()=>{ ui.creditsModal.classList.remove('show'); });
+
+document.getElementById('spiderBtn').addEventListener('click', ()=> {
+  // clicking spider shows a message and small chance to award something (already codes include Arachnophobia)
+  const msg = spiderPick();
+  state.upgradeText = 'Spider: ' + msg;
+  // small chance to give something on rare messages
+  if(Math.random() < 0.02) { state.gems += 100; state.upgradeText += ' (+100 bonus)'; }
+  updateUI();
+});
+
+/* ---------- floating gem visuals ---------- */
+createFloatGems();
+
+/* ---------- update UI ---------- */
+function updateUI(){
+  ui.gems.innerText = formatNumber(state.gems);
+  ui.gemType.innerText = tiers[state.tier];
+  ui.clickPower.innerText = formatNumber(state.clickPower);
+  ui.perSec.innerText = formatNumber(getPerSecond());
+  ui.clickCost.innerText = formatNumber(state.clickCost || 10);
+  ui.autoCost.innerText = formatNumber(state.autoCost || 50);
+  ui.megaCost.innerText = formatNumber(state.megaCost || 500);
+  ui.aiCost.innerText = formatNumber(state.aiCost || 2000);
+  ui.factoryCost.innerText = formatNumber(state.factoryCost || 5000);
+  ui.planetCost.innerText = formatNumber(state.planetCost || 50000);
+  ui.tierCost.innerText = formatNumber(state.tierCost || 200);
+  ui.diamondTier.innerText = state.diamondTier >= 0 ? diamondColors[state.diamondTier] : 'None';
+  ui.autoCount.innerText = state.autoMiners;
+  ui.megaCount.innerText = state.megaMiners;
+  ui.aiCount.innerText = state.aiMiners;
+  ui.factoryCount.innerText = state.factories;
+  ui.planetCount.innerText = state.planets;
+  document.getElementById('upgradeText').innerText = state.upgradeText || (state.cheatDetected ? 'Cheat detected — leaderboard disabled' : '');
+  ui.toggleSound.checked = state.settings.sound;
+  ui.toggleMusic.checked = state.settings.music;
 }
 
-/* If spider was saved in state, spawn it */
-if(state.hasSpider) {
-  // small delay to ensure UI exists
-  setTimeout(()=> spawnArachnid(), 300)
-}
+/* ---------- intervals ---------- */
+// production per second
+setInterval(()=>{ const gain = getPerSecond(); state.gems += gain; updateUI(); }, 1000);
+// autosave
+setInterval(()=>{ saveGame(); }, 5000);
+// leaderboard refresh every minute (60k ms)
+setInterval(()=>{ if(fbEnabled) fetchFirebaseLeaderboard(); else renderLeaderboard(); }, 60000);
 
-/* ----- Redeem UI: show redeemed codes initially ----- */
-(function initRedeemedUI(){
-  // show redeemed list in modal if user opens Redeemed
-  // nothing else needed; 'Redeemed' button displays list
-})();
+/* ---------- initial load ---------- */
+loadGame(); updateUI();
+const storedFirebase = localStorage.getItem('firebaseConfig');
+if(storedFirebase){ try{ enableFirebase(JSON.parse(storedFirebase)) }catch(e){ console.warn('Stored firebase invalid') } }
 
-/* ----- Anti-cheat: suspicious jump detection & restore UI ----- */
-function detectSuspiciousJump(prevState, newState){
-  try{
-    // if gems jumped by more than (perSecond * 60 * 60 * 24 * 7) i.e. more than a week's worth by generators
-    // BUT user asked for unlimited offline, so we only flag extremely absurd jumps (e.g., 1e9x expected)
-    const perSec = Math.max(1, getPerSecond())
-    const expected = perSec * Math.max(1, (Date.now() - (prevState.lastSave||Date.now()))/1000)
-    const delta = newState.gems - prevState.gems
-    if(delta <= 0) return false
-    // suspicious if delta > expected * 100000 (huge multiplier) OR delta is NaN/Infinity or extremely large
-    if(!isFinite(delta) || delta > expected * 100000 || delta > 1e50) return true
-    return false
-  }catch(e){ return false }
-}
+/* resume music on first user click (iOS) */
+document.addEventListener('click', function onFirst(){ if(state.settings.music) startMusicLoop(); if(!audioCtx) ensureAudio(); document.removeEventListener('click', onFirst) }, { once:true });
 
-/* Provide user command to restore from backups via console helper */
-window.__GEM_restoreBackup = function(index = 0){
-  const b = saveBackups[index]
-  if(!b) { alert('No backup at that index') ; return }
-  const s = JSON.parse(b.snap)
-  Object.assign(state, s)
-  saveGame()
-  updateUI()
-  alert('Restored backup #' + index)
-}
+/* debug helpers */
+window.__GEM_STATE = state;
+window.__EXPORT = ()=>JSON.stringify(state);
 
-/* Hook: when importSave or exportSave used, push backup & run checksum */
-const _oldImportSave = window.importSave
-window.importSave = function(){
-  // push current backup then import using original
-  try{ pushBackup(JSON.parse(JSON.stringify(state))) }catch(e){}
-  if(typeof _oldImportSave === 'function') _oldImportSave()
-  // after import, recompute checksum and save
-  try{ localStorage.setItem(CHECKSUM_KEY, computeStateChecksum(state)); saveGame(); updateUI() }catch(e){}
-}
-
-/* Initialize UI with redeemed codes data (basic) */
-(function populateRedeemedOnLoad(){
-  // nothing fancy: ensure local storage key exists
-  localStorage.setItem(CODE_REDEEMS_KEY, JSON.stringify(Array.from(_redeemed)))
-})();
-
-/* Small helper to show redeemed codes message after redeem */
-function showTemporary(msg, timeout=2200){
-  const el = document.getElementById('codesMsg')
-  if(el){ el.innerText = msg; setTimeout(()=>{ if(el.innerText===msg) el.innerText=''} , timeout) }
-}
-
-/* ----- Save initial checksum and backup now (on first run) ----- */
-try{
-  pushBackup(JSON.parse(JSON.stringify(state)))
-  localStorage.setItem(CHECKSUM_KEY, computeStateChecksum(state))
-}catch(e){}
-
-/* start boost cleanup schedule (in case loads restored boosts) */
-scheduleBoostCleanup()
-
-/* Provide quick feedback on code redeeming to user area (hook existing message function if present) */
-window.__redeemCode = redeemCode
-
-/* ---------- END: Anti-cheat + Codes + Arachnophobia patch ---------- */
+/* ---------- small helpers ---------- */
+function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) }
+</script>
+</body>
+</html>
